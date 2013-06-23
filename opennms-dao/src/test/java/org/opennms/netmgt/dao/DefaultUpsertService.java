@@ -32,6 +32,8 @@ import static org.opennms.core.utils.LogUtils.debugf;
 import static org.opennms.core.utils.LogUtils.infof;
 
 import org.opennms.core.utils.BeanUtils;
+import org.opennms.netmgt.dao.api.NodeDao;
+import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.dao.support.UpsertTemplate;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsSnmpInterface;

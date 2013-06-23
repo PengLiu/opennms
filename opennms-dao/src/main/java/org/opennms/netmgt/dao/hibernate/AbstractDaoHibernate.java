@@ -44,7 +44,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.metadata.ClassMetadata;
 import org.opennms.core.utils.LogUtils;
-import org.opennms.netmgt.dao.OnmsDao;
+import org.opennms.netmgt.dao.api.OnmsDao;
 import org.opennms.netmgt.model.OnmsCriteria;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;

@@ -33,10 +33,10 @@ import java.util.*;
 
 import org.opennms.core.utils.ThreadCategory;
 import org.opennms.netmgt.EventConstants;
-import org.opennms.netmgt.dao.GraphDao;
-import org.opennms.netmgt.dao.NodeDao;
-import org.opennms.netmgt.dao.ResourceDao;
-import org.opennms.netmgt.dao.RrdDao;
+import org.opennms.netmgt.dao.api.GraphDao;
+import org.opennms.netmgt.dao.api.NodeDao;
+import org.opennms.netmgt.dao.api.ResourceDao;
+import org.opennms.netmgt.dao.api.RrdDao;
 import org.opennms.netmgt.model.OnmsResource;
 import org.opennms.netmgt.model.PrefabGraph;
 import org.opennms.netmgt.model.RrdGraphAttribute;
@@ -268,7 +268,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>getResourceDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.ResourceDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.ResourceDao} object.
      */
     public ResourceDao getResourceDao() {
         return m_resourceDao;
@@ -277,7 +277,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>setResourceDao</p>
      *
-     * @param resourceDao a {@link org.opennms.netmgt.dao.ResourceDao} object.
+     * @param resourceDao a {@link org.opennms.netmgt.dao.api.ResourceDao} object.
      */
     public void setResourceDao(ResourceDao resourceDao) {
         m_resourceDao = resourceDao;
@@ -286,7 +286,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>getNodeDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.NodeDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.NodeDao} object.
      */
     public NodeDao getNodeDao() {
         return m_nodeDao;
@@ -295,7 +295,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>setNodeDao</p>
      *
-     * @param nodeDao a {@link org.opennms.netmgt.dao.NodeDao} object.
+     * @param nodeDao a {@link org.opennms.netmgt.dao.api.NodeDao} object.
      */
     public void setNodeDao(NodeDao nodeDao) {
         m_nodeDao = nodeDao;
@@ -304,7 +304,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>getGraphDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.GraphDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.GraphDao} object.
      */
     public GraphDao getGraphDao() {
         return m_graphDao;
@@ -313,7 +313,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>setGraphDao</p>
      *
-     * @param graphDao a {@link org.opennms.netmgt.dao.GraphDao} object.
+     * @param graphDao a {@link org.opennms.netmgt.dao.api.GraphDao} object.
      */
     public void setGraphDao(GraphDao graphDao) {
         m_graphDao = graphDao;
@@ -322,7 +322,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>getRrdDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.RrdDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.RrdDao} object.
      */
     public RrdDao getRrdDao() {
         return m_rrdDao;
@@ -331,7 +331,7 @@ public class DefaultGraphResultsService implements GraphResultsService, Initiali
     /**
      * <p>setRrdDao</p>
      *
-     * @param rrdDao a {@link org.opennms.netmgt.dao.RrdDao} object.
+     * @param rrdDao a {@link org.opennms.netmgt.dao.api.RrdDao} object.
      */
     public void setRrdDao(RrdDao rrdDao) {
         m_rrdDao = rrdDao;

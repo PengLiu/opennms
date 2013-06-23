@@ -37,7 +37,7 @@ import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 import org.opennms.netmgt.config.siteStatusViews.View;
 import org.opennms.netmgt.config.siteStatusViews.Views;
-import org.opennms.netmgt.dao.SiteStatusViewConfigDao;
+import org.opennms.netmgt.dao.api.SiteStatusViewConfigDao;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**

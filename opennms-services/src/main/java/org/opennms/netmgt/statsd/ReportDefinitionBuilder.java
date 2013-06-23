@@ -33,10 +33,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.StatisticsDaemonConfigDao;
-import org.opennms.netmgt.dao.castor.statsd.PackageReport;
-import org.opennms.netmgt.dao.castor.statsd.Report;
-import org.opennms.netmgt.dao.castor.statsd.StatsdPackage;
+import org.opennms.netmgt.config.statsd.model.PackageReport;
+import org.opennms.netmgt.config.statsd.model.Report;
+import org.opennms.netmgt.config.statsd.model.StatsdPackage;
+import org.opennms.netmgt.dao.api.StatisticsDaemonConfigDao;
 import org.opennms.netmgt.model.AttributeStatisticVisitorWithResults;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
@@ -131,7 +131,7 @@ public class ReportDefinitionBuilder implements InitializingBean {
     /**
      * <p>getStatsdConfigDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.StatisticsDaemonConfigDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.StatisticsDaemonConfigDao} object.
      */
     public StatisticsDaemonConfigDao getStatsdConfigDao() {
         return m_statsdConfigDao;
@@ -140,7 +140,7 @@ public class ReportDefinitionBuilder implements InitializingBean {
     /**
      * <p>setStatsdConfigDao</p>
      *
-     * @param statsdConfigDao a {@link org.opennms.netmgt.dao.StatisticsDaemonConfigDao} object.
+     * @param statsdConfigDao a {@link org.opennms.netmgt.dao.api.StatisticsDaemonConfigDao} object.
      */
     public void setStatsdConfigDao(StatisticsDaemonConfigDao statsdConfigDao) {
         m_statsdConfigDao = statsdConfigDao;

@@ -40,7 +40,7 @@ import org.opennms.netmgt.config.CollectdConfig;
 import org.opennms.netmgt.config.CollectdConfigFactory;
 import org.opennms.netmgt.config.CollectdPackage;
 import org.opennms.netmgt.config.collectd.Collector;
-import org.opennms.netmgt.dao.CollectorConfigDao;
+import org.opennms.netmgt.dao.api.CollectorConfigDao;
 
 /**
  * <p>CollectorConfigDaoImpl class.</p>

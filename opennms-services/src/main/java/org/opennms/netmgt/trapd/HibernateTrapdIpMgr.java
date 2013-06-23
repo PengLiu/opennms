@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.IpInterfaceDao;
+import org.opennms.netmgt.dao.api.IpInterfaceDao;
 import org.opennms.netmgt.model.OnmsIpInterface;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -146,7 +146,7 @@ public class HibernateTrapdIpMgr implements TrapdIpMgr, InitializingBean {
     /**
      * <p>getIpInterfaceDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.IpInterfaceDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.IpInterfaceDao} object.
      */
     public IpInterfaceDao getIpInterfaceDao() {
         return m_ipInterfaceDao;
@@ -155,7 +155,7 @@ public class HibernateTrapdIpMgr implements TrapdIpMgr, InitializingBean {
     /**
      * <p>setIpInterfaceDao</p>
      *
-     * @param ipInterfaceDao a {@link org.opennms.netmgt.dao.IpInterfaceDao} object.
+     * @param ipInterfaceDao a {@link org.opennms.netmgt.dao.api.IpInterfaceDao} object.
      */
     public void setIpInterfaceDao(IpInterfaceDao ipInterfaceDao) {
         m_ipInterfaceDao = ipInterfaceDao;

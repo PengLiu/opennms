@@ -36,9 +36,9 @@ import javax.oss.fm.monitor.NotifyClearedAlarmEvent;
 import javax.oss.fm.monitor.NotifyNewAlarmEvent;
 import javax.oss.util.IRPEvent;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.AlarmDao;
-import org.opennms.netmgt.dao.AssetRecordDao;
-import org.opennms.netmgt.dao.NodeDao;
+import org.opennms.netmgt.dao.api.AlarmDao;
+import org.opennms.netmgt.dao.api.AssetRecordDao;
+import org.opennms.netmgt.dao.api.NodeDao;
 import org.openoss.ossj.fm.monitor.spring.OssBeanAlarmEventReceiver;
 import org.openoss.ossj.fm.monitor.spring.AlarmEventReceiverEventHandler;
 
@@ -68,7 +68,7 @@ public class QoSDrxAlarmEventReceiverEventHandlerImplShell implements AlarmEvent
 	
 	/**
 	 * Used to obtain opennms asset information for inclusion in alarms
-	 * @see org.opennms.netmgt.dao.AssetRecordDao
+	 * @see org.opennms.netmgt.dao.api.AssetRecordDao
 	 */
 	@SuppressWarnings("unused")
 	private static AssetRecordDao _assetRecordDao;
@@ -77,7 +77,7 @@ public class QoSDrxAlarmEventReceiverEventHandlerImplShell implements AlarmEvent
 	/**
 	 * Used by Spring Application context to pass in AssetRecordDao
 	 *
-	 * @param ar a {@link org.opennms.netmgt.dao.AssetRecordDao} object.
+	 * @param ar a {@link org.opennms.netmgt.dao.api.AssetRecordDao} object.
 	 */
 	public  void setAssetRecordDao(AssetRecordDao ar){
 		_assetRecordDao = ar;
@@ -85,7 +85,7 @@ public class QoSDrxAlarmEventReceiverEventHandlerImplShell implements AlarmEvent
 
 	/**
 	 * Used to obtain opennms node information for inclusion in alarms
-	 * @see org.opennms.netmgt.dao.NodeDao 
+	 * @see org.opennms.netmgt.dao.api.NodeDao 
 	 */
 	@SuppressWarnings("unused")
 	private static NodeDao _nodeDao;
@@ -93,7 +93,7 @@ public class QoSDrxAlarmEventReceiverEventHandlerImplShell implements AlarmEvent
 	/**
 	 * Used by Spring Application context to pass in NodeDaof
 	 *
-	 * @param nodedao a {@link org.opennms.netmgt.dao.NodeDao} object.
+	 * @param nodedao a {@link org.opennms.netmgt.dao.api.NodeDao} object.
 	 */
 	public  void setNodeDao( NodeDao nodedao){
 		_nodeDao = nodedao;
@@ -101,7 +101,7 @@ public class QoSDrxAlarmEventReceiverEventHandlerImplShell implements AlarmEvent
 
 	/**
 	 * Used to search and update opennms alarm list
-	 * @see org.opennms.netmgt.dao.AlarmDao
+	 * @see org.opennms.netmgt.dao.api.AlarmDao
 	 */
 	@SuppressWarnings("unused")
 	private static AlarmDao _alarmDao;
@@ -109,7 +109,7 @@ public class QoSDrxAlarmEventReceiverEventHandlerImplShell implements AlarmEvent
 	/**
 	 * Used by Spring Application context to pass in alarmDao
 	 *
-	 * @param alarmDao a {@link org.opennms.netmgt.dao.AlarmDao} object.
+	 * @param alarmDao a {@link org.opennms.netmgt.dao.api.AlarmDao} object.
 	 */
 	public  void setAlarmDao( AlarmDao alarmDao){
 		_alarmDao = alarmDao;

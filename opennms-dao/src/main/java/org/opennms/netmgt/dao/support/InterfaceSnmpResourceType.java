@@ -43,8 +43,8 @@ import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.core.utils.LazySet;
 import org.opennms.core.utils.SIUtils;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.NodeDao;
-import org.opennms.netmgt.dao.ResourceDao;
+import org.opennms.netmgt.dao.api.NodeDao;
+import org.opennms.netmgt.dao.api.ResourceDao;
 import org.opennms.netmgt.dao.support.ResourceTypeUtils;
 import org.opennms.netmgt.model.ExternalValueAttribute;
 import org.opennms.netmgt.model.OnmsAttribute;
@@ -68,8 +68,8 @@ public class InterfaceSnmpResourceType implements OnmsResourceType {
     /**
      * <p>Constructor for InterfaceSnmpResourceType.</p>
      *
-     * @param resourceDao a {@link org.opennms.netmgt.dao.ResourceDao} object.
-     * @param nodeDao a {@link org.opennms.netmgt.dao.NodeDao} object.
+     * @param resourceDao a {@link org.opennms.netmgt.dao.api.ResourceDao} object.
+     * @param nodeDao a {@link org.opennms.netmgt.dao.api.NodeDao} object.
      */
     public InterfaceSnmpResourceType(ResourceDao resourceDao, NodeDao nodeDao) {
         m_resourceDao = resourceDao;

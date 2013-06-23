@@ -40,8 +40,8 @@ import org.hibernate.criterion.Restrictions;
 
 import org.opennms.core.utils.LogUtils;
 
-import org.opennms.netmgt.dao.AtInterfaceDao;
-import org.opennms.netmgt.dao.IpInterfaceDao;
+import org.opennms.netmgt.dao.api.AtInterfaceDao;
+import org.opennms.netmgt.dao.api.IpInterfaceDao;
 import org.opennms.netmgt.model.OnmsAtInterface;
 import org.opennms.netmgt.model.OnmsCriteria;
 import org.opennms.netmgt.model.OnmsIpInterface;

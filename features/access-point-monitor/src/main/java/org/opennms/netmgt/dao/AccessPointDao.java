@@ -30,6 +30,7 @@ package org.opennms.netmgt.dao;
 
 import java.util.List;
 
+import org.opennms.netmgt.dao.api.OnmsDao;
 import org.opennms.netmgt.model.OnmsAccessPoint;
 import org.opennms.netmgt.model.OnmsAccessPointCollection;
 

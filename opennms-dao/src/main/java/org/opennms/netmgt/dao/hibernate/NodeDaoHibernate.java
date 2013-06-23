@@ -40,7 +40,7 @@ import java.util.Map;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
-import org.opennms.netmgt.dao.NodeDao;
+import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.model.OnmsCategory;
 import org.opennms.netmgt.model.OnmsDistPoller;
 import org.opennms.netmgt.model.OnmsIpInterface;

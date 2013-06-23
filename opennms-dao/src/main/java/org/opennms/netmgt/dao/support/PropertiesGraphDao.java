@@ -46,7 +46,7 @@ import org.opennms.core.utils.BundleLists;
 import org.opennms.core.utils.FileReloadCallback;
 import org.opennms.core.utils.FileReloadContainer;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.GraphDao;
+import org.opennms.netmgt.dao.api.GraphDao;
 import org.opennms.netmgt.model.AdhocGraphType;
 import org.opennms.netmgt.model.OnmsAttribute;
 import org.opennms.netmgt.model.OnmsResource;

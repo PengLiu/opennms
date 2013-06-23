@@ -44,7 +44,7 @@ import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.config.provisiond.RequisitionDef;
-import org.opennms.netmgt.dao.ProvisiondConfigurationDao;
+import org.opennms.netmgt.dao.api.ProvisiondConfigurationDao;
 import org.opennms.test.JUnitConfigurationEnvironment;
 import org.quartz.Job;
 import org.quartz.JobDetail;

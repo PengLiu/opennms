@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.ServiceTypeDao;
+import org.opennms.netmgt.dao.api.ServiceTypeDao;
 import org.opennms.netmgt.model.OnmsServiceType;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
@@ -119,7 +119,7 @@ public class DaoEventdServiceManager implements InitializingBean, EventdServiceM
     /**
      * <p>getServiceTypeDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.ServiceTypeDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.ServiceTypeDao} object.
      */
     public ServiceTypeDao getServiceTypeDao() {
         return m_serviceTypeDao;
@@ -128,7 +128,7 @@ public class DaoEventdServiceManager implements InitializingBean, EventdServiceM
     /**
      * <p>setServiceTypeDao</p>
      *
-     * @param serviceTypeDao a {@link org.opennms.netmgt.dao.ServiceTypeDao} object.
+     * @param serviceTypeDao a {@link org.opennms.netmgt.dao.api.ServiceTypeDao} object.
      */
     public void setServiceTypeDao(ServiceTypeDao serviceTypeDao) {
         m_serviceTypeDao = serviceTypeDao;

@@ -34,7 +34,7 @@ import org.opennms.api.integration.ticketing.*;
 import org.opennms.api.integration.ticketing.Ticket.State;
 import org.opennms.core.utils.ThreadCategory;
 
-import org.opennms.netmgt.dao.AlarmDao;
+import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.eventd.EventIpcManagerFactory;
 import org.opennms.netmgt.model.OnmsAlarm;
 import org.opennms.netmgt.model.TroubleTicketState;
@@ -72,7 +72,7 @@ public class DefaultTicketerServiceLayer implements TicketerServiceLayer, Initia
 	/**
 	 * Needs access to the AlarmDao.
 	 *
-	 * @param alarmDao a {@link org.opennms.netmgt.dao.AlarmDao} object.
+	 * @param alarmDao a {@link org.opennms.netmgt.dao.api.AlarmDao} object.
 	 */
 	public void setAlarmDao(AlarmDao alarmDao) {
 		m_alarmDao = alarmDao;

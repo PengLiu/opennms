@@ -52,7 +52,7 @@ import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.EventConstants;
 import org.opennms.netmgt.config.SnmpPeerFactory;
-import org.opennms.netmgt.dao.NodeDao;
+import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.eventd.mock.EventAnticipator;
 import org.opennms.netmgt.eventd.mock.MockEventIpcManager;
 import org.opennms.netmgt.model.OnmsNode;

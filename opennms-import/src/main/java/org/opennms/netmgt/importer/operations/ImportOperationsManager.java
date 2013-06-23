@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.opennms.core.concurrent.LogPreservingThreadFactory;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.OnmsDao;
+import org.opennms.netmgt.dao.api.OnmsDao;
 import org.opennms.netmgt.model.events.EventIpcManager;
 import org.opennms.netmgt.xml.event.Event;
 import org.springframework.transaction.TransactionStatus;
@@ -242,7 +242,7 @@ public class ImportOperationsManager {
      * <p>persistOperations</p>
      *
      * @param template a {@link org.springframework.transaction.support.TransactionTemplate} object.
-     * @param dao a {@link org.opennms.netmgt.dao.OnmsDao} object.
+     * @param dao a {@link org.opennms.netmgt.dao.api.OnmsDao} object.
      */
     public void persistOperations(TransactionTemplate template, OnmsDao<?, ?> dao) {
     	m_stats.beginProcessingOps();
@@ -286,7 +286,7 @@ public class ImportOperationsManager {
 	 *
 	 * @param oper a {@link org.opennms.netmgt.importer.operations.ImportOperation} object.
 	 * @param template a {@link org.springframework.transaction.support.TransactionTemplate} object.
-	 * @param dao a {@link org.opennms.netmgt.dao.OnmsDao} object.
+	 * @param dao a {@link org.opennms.netmgt.dao.api.OnmsDao} object.
 	 * @param dbPool a {@link java.util.concurrent.ExecutorService} object.
 	 */
 	protected void preprocessOperation(final ImportOperation oper, final TransactionTemplate template, final OnmsDao<?, ?> dao, final ExecutorService dbPool) {
@@ -310,7 +310,7 @@ public class ImportOperationsManager {
 	 *
 	 * @param oper a {@link org.opennms.netmgt.importer.operations.ImportOperation} object.
 	 * @param template a {@link org.springframework.transaction.support.TransactionTemplate} object.
-	 * @param dao a {@link org.opennms.netmgt.dao.OnmsDao} object.
+	 * @param dao a {@link org.opennms.netmgt.dao.api.OnmsDao} object.
 	 */
 	protected void persistOperation(final ImportOperation oper, TransactionTemplate template, final OnmsDao<?, ?> dao) {
 		m_stats.beginPersisting(oper);

@@ -36,7 +36,7 @@ import org.opennms.core.utils.LogUtils;
 import org.opennms.javamail.JavaMailerException;
 import org.opennms.javamail.JavaSendMailer;
 import org.opennms.netmgt.config.reportd.Report;
-import org.opennms.netmgt.dao.JavaMailConfigurationDao;
+import org.opennms.netmgt.dao.api.JavaMailConfigurationDao;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -92,7 +92,7 @@ public class JavaMailDeliveryService implements ReportDeliveryService {
     /**
      * <p>getJavamailConfigDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.JavaMailConfigurationDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.JavaMailConfigurationDao} object.
      */
     public JavaMailConfigurationDao getJavamailConfigDao() {
         return m_JavamailConfigDao;
@@ -102,7 +102,7 @@ public class JavaMailDeliveryService implements ReportDeliveryService {
     /**
      * <p>setJavamailConfigDao</p>
      *
-     * @param javamailConfigDao a {@link org.opennms.netmgt.dao.JavaMailConfigurationDao} object.
+     * @param javamailConfigDao a {@link org.opennms.netmgt.dao.api.JavaMailConfigurationDao} object.
      */
     public void setJavamailConfigDao(JavaMailConfigurationDao javamailConfigDao) {
         m_JavamailConfigDao = javamailConfigDao;

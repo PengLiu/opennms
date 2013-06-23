@@ -34,7 +34,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.ThreadCategory;
 import org.opennms.netmgt.ackd.AckReader;
-import org.opennms.netmgt.dao.AckdConfigurationDao;
+import org.opennms.netmgt.dao.api.AckdConfigurationDao;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -243,7 +243,7 @@ public class DefaultAckReader implements AckReader, InitializingBean {
     /**
      * <p>setAckdConfigDao</p>
      *
-     * @param ackdConfigDao a {@link org.opennms.netmgt.dao.AckdConfigurationDao} object.
+     * @param ackdConfigDao a {@link org.opennms.netmgt.dao.api.AckdConfigurationDao} object.
      */
     public void setAckdConfigDao(AckdConfigurationDao ackdConfigDao) {
         m_ackdConfigDao = ackdConfigDao;
@@ -252,7 +252,7 @@ public class DefaultAckReader implements AckReader, InitializingBean {
     /**
      * <p>getAckdConfigDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.AckdConfigurationDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.AckdConfigurationDao} object.
      */
     public AckdConfigurationDao getAckdConfigDao() {
         return m_ackdConfigDao;

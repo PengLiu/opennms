@@ -41,9 +41,9 @@ import javax.oss.fm.monitor.AlarmValue;
 
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.AssetRecordDao;
-import org.opennms.netmgt.dao.DistPollerDao;
-import org.opennms.netmgt.dao.NodeDao;
+import org.opennms.netmgt.dao.api.AssetRecordDao;
+import org.opennms.netmgt.dao.api.DistPollerDao;
+import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.model.OnmsAlarm;
 import org.opennms.netmgt.model.OnmsAssetRecord;
 import org.opennms.netmgt.model.OnmsNode;
@@ -87,7 +87,7 @@ public class OnmsAlarmOssjMapper {
 	/**
 	 * Used by Spring Application context to pass in distPollerDao;
 	 *
-	 * @param _distPollerDao a {@link org.opennms.netmgt.dao.DistPollerDao} object.
+	 * @param _distPollerDao a {@link org.opennms.netmgt.dao.api.DistPollerDao} object.
 	 */
 	public void setDistPollerDao(DistPollerDao _distPollerDao) {
 		distPollerDao =  _distPollerDao;
@@ -95,7 +95,7 @@ public class OnmsAlarmOssjMapper {
 
 	/**
 	 * Used to obtain opennms asset information for inclusion in alarms
-	 * @see org.opennms.netmgt.dao.AssetRecordDao
+	 * @see org.opennms.netmgt.dao.api.AssetRecordDao
 	 */
 	@SuppressWarnings("unused")
 	private AssetRecordDao _assetRecordDao;
@@ -103,7 +103,7 @@ public class OnmsAlarmOssjMapper {
 	/**
 	 * Used by Spring Application context to pass in AssetRecordDao
 	 *
-	 * @param ar a {@link org.opennms.netmgt.dao.AssetRecordDao} object.
+	 * @param ar a {@link org.opennms.netmgt.dao.api.AssetRecordDao} object.
 	 */
 	public void setAssetRecordDao(AssetRecordDao ar){
 		_assetRecordDao = ar;
@@ -111,7 +111,7 @@ public class OnmsAlarmOssjMapper {
 
 	/**
 	 * Used to obtain opennms node information for inclusion in alarms
-	 * @see org.opennms.netmgt.dao.NodeDao 
+	 * @see org.opennms.netmgt.dao.api.NodeDao 
 	 */
 	@SuppressWarnings("unused")
 	private NodeDao _nodeDao;
@@ -119,7 +119,7 @@ public class OnmsAlarmOssjMapper {
 	/**
 	 * Used by Spring Application context to pass in NodeDaof
 	 *
-	 * @param nodedao a {@link org.opennms.netmgt.dao.NodeDao} object.
+	 * @param nodedao a {@link org.opennms.netmgt.dao.api.NodeDao} object.
 	 */
 	public void setNodeDao( NodeDao nodedao){
 		_nodeDao = nodedao;

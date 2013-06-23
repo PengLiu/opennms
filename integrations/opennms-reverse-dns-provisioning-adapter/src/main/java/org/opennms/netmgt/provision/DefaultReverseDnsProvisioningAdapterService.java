@@ -3,8 +3,8 @@ package org.opennms.netmgt.provision;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opennms.netmgt.dao.IpInterfaceDao;
-import org.opennms.netmgt.dao.NodeDao;
+import org.opennms.netmgt.dao.api.IpInterfaceDao;
+import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.model.OnmsIpInterface;
 
 import org.springframework.transaction.TransactionStatus;
@@ -47,7 +47,7 @@ public class DefaultReverseDnsProvisioningAdapterService implements
     /**
      * <p>getNodeDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.NodeDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.NodeDao} object.
      */
     public NodeDao getNodeDao() {
         return m_nodeDao;
@@ -55,7 +55,7 @@ public class DefaultReverseDnsProvisioningAdapterService implements
     /**
      * <p>setNodeDao</p>
      *
-     * @param dao a {@link org.opennms.netmgt.dao.NodeDao} object.
+     * @param dao a {@link org.opennms.netmgt.dao.api.NodeDao} object.
      */
     public void setNodeDao(NodeDao dao) {
         m_nodeDao = dao;

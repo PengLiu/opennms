@@ -64,9 +64,9 @@ import org.opennms.features.poller.remote.gwt.client.location.LocationDetails;
 import org.opennms.features.poller.remote.gwt.client.location.LocationInfo;
 import org.opennms.features.poller.remote.gwt.server.geocoding.Geocoder;
 import org.opennms.features.poller.remote.gwt.server.geocoding.GeocoderException;
-import org.opennms.netmgt.dao.ApplicationDao;
-import org.opennms.netmgt.dao.LocationMonitorDao;
-import org.opennms.netmgt.dao.MonitoredServiceDao;
+import org.opennms.netmgt.dao.api.ApplicationDao;
+import org.opennms.netmgt.dao.api.LocationMonitorDao;
+import org.opennms.netmgt.dao.api.MonitoredServiceDao;
 import org.opennms.netmgt.model.OnmsApplication;
 import org.opennms.netmgt.model.OnmsCriteria;
 import org.opennms.netmgt.model.OnmsIpInterface;
@@ -141,7 +141,7 @@ public class DefaultLocationDataService implements LocationDataService, Initiali
     /**
      * <p>setLocationMonitorDao</p>
      *
-     * @param dao a {@link org.opennms.netmgt.dao.LocationMonitorDao} object.
+     * @param dao a {@link org.opennms.netmgt.dao.api.LocationMonitorDao} object.
      */
     public void setLocationMonitorDao(final LocationMonitorDao dao) {
         m_locationDao = dao;
@@ -150,7 +150,7 @@ public class DefaultLocationDataService implements LocationDataService, Initiali
     /**
      * <p>setApplicationDao</p>
      *
-     * @param dao a {@link org.opennms.netmgt.dao.ApplicationDao} object.
+     * @param dao a {@link org.opennms.netmgt.dao.api.ApplicationDao} object.
      */
     public void setApplicationDao(final ApplicationDao dao) {
         m_applicationDao = dao;
@@ -159,7 +159,7 @@ public class DefaultLocationDataService implements LocationDataService, Initiali
     /**
      * <p>setMonitoredServiceDao</p>
      *
-     * @param dao a {@link org.opennms.netmgt.dao.MonitoredServiceDao} object.
+     * @param dao a {@link org.opennms.netmgt.dao.api.MonitoredServiceDao} object.
      */
     public void setMonitoredServiceDao(final MonitoredServiceDao dao) {
         m_monitoredServiceDao = dao;
@@ -921,7 +921,7 @@ public class DefaultLocationDataService implements LocationDataService, Initiali
     /**
      * <p>getLocationMonitorDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.LocationMonitorDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.LocationMonitorDao} object.
      */
     public LocationMonitorDao getLocationMonitorDao() {
              return m_locationDao;

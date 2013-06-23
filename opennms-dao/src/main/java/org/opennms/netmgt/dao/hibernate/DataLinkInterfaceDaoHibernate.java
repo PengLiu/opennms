@@ -35,7 +35,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.opennms.netmgt.dao.DataLinkInterfaceDao;
+import org.opennms.netmgt.dao.api.DataLinkInterfaceDao;
 import org.opennms.netmgt.model.DataLinkInterface;
 import org.opennms.netmgt.model.OnmsArpInterface.StatusType;
 import org.opennms.netmgt.model.OnmsCriteria;

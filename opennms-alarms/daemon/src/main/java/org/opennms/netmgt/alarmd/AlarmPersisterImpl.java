@@ -29,8 +29,8 @@
 package org.opennms.netmgt.alarmd;
 
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.AlarmDao;
-import org.opennms.netmgt.dao.EventDao;
+import org.opennms.netmgt.dao.api.AlarmDao;
+import org.opennms.netmgt.dao.api.EventDao;
 import org.opennms.netmgt.model.OnmsAlarm;
 import org.opennms.netmgt.model.OnmsEvent;
 import org.opennms.netmgt.model.OnmsSeverity;
@@ -221,7 +221,7 @@ public class AlarmPersisterImpl implements AlarmPersister {
     /**
      * <p>setAlarmDao</p>
      *
-     * @param alarmDao a {@link org.opennms.netmgt.dao.AlarmDao} object.
+     * @param alarmDao a {@link org.opennms.netmgt.dao.api.AlarmDao} object.
      */
     public void setAlarmDao(AlarmDao alarmDao) {
         m_alarmDao = alarmDao;
@@ -230,7 +230,7 @@ public class AlarmPersisterImpl implements AlarmPersister {
     /**
      * <p>getAlarmDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.AlarmDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.AlarmDao} object.
      */
     public AlarmDao getAlarmDao() {
         return m_alarmDao;
@@ -239,7 +239,7 @@ public class AlarmPersisterImpl implements AlarmPersister {
     /**
      * <p>setEventDao</p>
      *
-     * @param eventDao a {@link org.opennms.netmgt.dao.EventDao} object.
+     * @param eventDao a {@link org.opennms.netmgt.dao.api.EventDao} object.
      */
     public void setEventDao(EventDao eventDao) {
         m_eventDao = eventDao;
@@ -248,7 +248,7 @@ public class AlarmPersisterImpl implements AlarmPersister {
     /**
      * <p>getEventDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.EventDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.EventDao} object.
      */
     public EventDao getEventDao() {
         return m_eventDao;

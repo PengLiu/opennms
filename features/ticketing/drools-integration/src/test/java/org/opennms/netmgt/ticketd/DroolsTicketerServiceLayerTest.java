@@ -32,7 +32,7 @@ import java.util.HashMap;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.opennms.netmgt.dao.AlarmDao;
+import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.eventd.EventIpcManagerFactory;
 import org.opennms.netmgt.eventd.mock.MockEventIpcManager;
 import org.opennms.netmgt.model.OnmsAlarm;

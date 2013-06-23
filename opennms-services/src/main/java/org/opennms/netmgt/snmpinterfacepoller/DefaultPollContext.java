@@ -41,8 +41,8 @@ import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.core.utils.ThreadCategory;
 
 import org.opennms.netmgt.EventConstants;
-import org.opennms.netmgt.dao.IpInterfaceDao;
-import org.opennms.netmgt.dao.SnmpInterfaceDao;
+import org.opennms.netmgt.dao.api.IpInterfaceDao;
+import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.model.OnmsIpInterface;
 import org.opennms.netmgt.model.OnmsSnmpInterface;
 import org.opennms.netmgt.model.PrimaryType;
@@ -70,7 +70,7 @@ public class DefaultPollContext implements PollContext {
     /**
      * <p>getIpInterfaceDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.IpInterfaceDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.IpInterfaceDao} object.
      */
     public IpInterfaceDao getIpInterfaceDao() {
         return m_ipInterfaceDao;
@@ -79,7 +79,7 @@ public class DefaultPollContext implements PollContext {
     /**
      * <p>setIpInterfaceDao</p>
      *
-     * @param ipInterfaceDao a {@link org.opennms.netmgt.dao.IpInterfaceDao} object.
+     * @param ipInterfaceDao a {@link org.opennms.netmgt.dao.api.IpInterfaceDao} object.
      */
     public void setIpInterfaceDao(IpInterfaceDao ipInterfaceDao) {
         m_ipInterfaceDao = ipInterfaceDao;
@@ -88,7 +88,7 @@ public class DefaultPollContext implements PollContext {
     /**
      * <p>getSnmpInterfaceDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.SnmpInterfaceDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.SnmpInterfaceDao} object.
      */
     public SnmpInterfaceDao getSnmpInterfaceDao() {
         return m_snmpInterfaceDao;
@@ -97,7 +97,7 @@ public class DefaultPollContext implements PollContext {
     /**
      * <p>setSnmpInterfaceDao</p>
      *
-     * @param snmpInterfaceDao a {@link org.opennms.netmgt.dao.SnmpInterfaceDao} object.
+     * @param snmpInterfaceDao a {@link org.opennms.netmgt.dao.api.SnmpInterfaceDao} object.
      */
     public void setSnmpInterfaceDao(SnmpInterfaceDao snmpInterfaceDao) {
         m_snmpInterfaceDao = snmpInterfaceDao;

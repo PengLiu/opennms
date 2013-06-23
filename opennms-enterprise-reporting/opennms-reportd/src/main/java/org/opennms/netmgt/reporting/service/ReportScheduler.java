@@ -36,7 +36,7 @@ import java.util.Iterator;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.config.reportd.Report;
-import org.opennms.netmgt.dao.ReportdConfigurationDao;
+import org.opennms.netmgt.dao.api.ReportdConfigurationDao;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -210,7 +210,7 @@ public class ReportScheduler implements InitializingBean, DisposableBean {
     /**
      * <p>getConfigDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.ReportdConfigurationDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.ReportdConfigurationDao} object.
      */
     public ReportdConfigurationDao getConfigDao() {
         return m_configDao;
@@ -220,7 +220,7 @@ public class ReportScheduler implements InitializingBean, DisposableBean {
     /**
      * <p>setConfigDao</p>
      *
-     * @param configDao a {@link org.opennms.netmgt.dao.ReportdConfigurationDao} object.
+     * @param configDao a {@link org.opennms.netmgt.dao.api.ReportdConfigurationDao} object.
      */
     public void setConfigDao(ReportdConfigurationDao configDao) {
         m_configDao = configDao;

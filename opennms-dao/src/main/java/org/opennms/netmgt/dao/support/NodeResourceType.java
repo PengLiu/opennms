@@ -37,7 +37,7 @@ import java.util.Set;
 
 import org.opennms.core.utils.LazyList;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.ResourceDao;
+import org.opennms.netmgt.dao.api.ResourceDao;
 import org.opennms.netmgt.model.OnmsAttribute;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsResource;
@@ -51,7 +51,7 @@ public class NodeResourceType implements OnmsResourceType {
     /**
      * <p>Constructor for NodeResourceType.</p>
      *
-     * @param resourceDao a {@link org.opennms.netmgt.dao.ResourceDao} object.
+     * @param resourceDao a {@link org.opennms.netmgt.dao.api.ResourceDao} object.
      */
     public NodeResourceType(ResourceDao resourceDao) {
         m_resourceDao = resourceDao;

@@ -41,6 +41,7 @@ import org.opennms.test.JUnitConfigurationEnvironment;
 import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.test.db.TemporaryDatabase;
 import org.opennms.core.test.db.TemporaryDatabaseAware;
+import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.model.AccessPointStatus;
 import org.opennms.netmgt.model.NetworkBuilder;
 import org.opennms.netmgt.model.OnmsAccessPoint;

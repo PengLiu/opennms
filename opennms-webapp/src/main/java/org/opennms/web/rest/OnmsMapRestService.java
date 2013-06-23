@@ -43,7 +43,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.opennms.core.criteria.CriteriaBuilder;
 import org.opennms.core.utils.LogUtils;
-import org.opennms.netmgt.dao.OnmsMapDao;
+import org.opennms.netmgt.dao.api.OnmsMapDao;
 import org.opennms.netmgt.model.OnmsMap;
 import org.opennms.netmgt.model.OnmsMapList;
 import org.springframework.beans.BeanWrapper;

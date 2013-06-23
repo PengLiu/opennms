@@ -39,8 +39,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.hibernate.criterion.Restrictions;
 import org.opennms.core.utils.LogUtils;
-import org.opennms.netmgt.dao.AlarmDao;
-import org.opennms.netmgt.dao.EventDao;
+import org.opennms.netmgt.dao.api.AlarmDao;
+import org.opennms.netmgt.dao.api.EventDao;
 import org.opennms.netmgt.dao.support.UpsertTemplate;
 import org.opennms.netmgt.model.OnmsAlarm;
 import org.opennms.netmgt.model.OnmsCriteria;

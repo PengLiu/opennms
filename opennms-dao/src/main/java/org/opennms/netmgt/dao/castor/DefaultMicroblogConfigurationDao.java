@@ -30,7 +30,7 @@ package org.opennms.netmgt.dao.castor;
 
 import org.opennms.netmgt.config.microblog.MicroblogConfiguration;
 import org.opennms.netmgt.config.microblog.MicroblogProfile;
-import org.opennms.netmgt.dao.MicroblogConfigurationDao;
+import org.opennms.netmgt.dao.api.MicroblogConfigurationDao;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 /**

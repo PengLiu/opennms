@@ -53,8 +53,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opennms.core.utils.LogUtils;
-import org.opennms.netmgt.dao.AlarmDao;
-import org.opennms.netmgt.dao.EventDao;
+import org.opennms.netmgt.dao.api.AlarmDao;
+import org.opennms.netmgt.dao.api.EventDao;
 import org.opennms.netmgt.model.ncs.NCSComponent;
 import org.opennms.netmgt.ncs.persistence.NCSComponentService;
 import org.springframework.beans.factory.annotation.Autowired;

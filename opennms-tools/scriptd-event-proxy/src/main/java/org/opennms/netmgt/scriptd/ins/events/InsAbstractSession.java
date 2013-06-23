@@ -34,7 +34,7 @@ import org.hibernate.criterion.Restrictions;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.LogUtils;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.SnmpInterfaceDao;
+import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.model.OnmsCriteria;
 import org.opennms.netmgt.model.OnmsSnmpInterface;
 import org.springframework.beans.factory.access.BeanFactoryReference;

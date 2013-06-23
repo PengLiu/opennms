@@ -37,8 +37,8 @@ import java.util.Set;
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.config.SnmpPeerFactory;
+import org.opennms.netmgt.dao.api.IpInterfaceDao;
 import org.opennms.netmgt.dao.support.DefaultResourceDao;
-import org.opennms.netmgt.dao.IpInterfaceDao;
 import org.opennms.netmgt.model.PrimaryType;
 import org.opennms.netmgt.poller.InetNetworkInterface;
 import org.opennms.netmgt.snmp.SnmpAgentConfig;
@@ -61,7 +61,7 @@ public class DefaultCollectionAgent extends InetNetworkInterface implements Coll
      * <p>create</p>
      *
      * @param ifaceId a {@link java.lang.Integer} object.
-     * @param ifaceDao a {@link org.opennms.netmgt.dao.IpInterfaceDao} object.
+     * @param ifaceDao a {@link org.opennms.netmgt.dao.api.IpInterfaceDao} object.
      * @param transMgr a {@link org.springframework.transaction.PlatformTransactionManager} object.
      * @return a {@link org.opennms.netmgt.collectd.CollectionAgent} object.
      */

@@ -47,7 +47,7 @@ import org.opennms.api.reporting.ReportFormat;
 import org.opennms.api.reporting.ReportService;
 import org.opennms.api.reporting.parameter.ReportParameters;
 import org.opennms.core.utils.ThreadCategory;
-import org.opennms.netmgt.dao.OnmsReportConfigDao;
+import org.opennms.netmgt.dao.api.OnmsReportConfigDao;
 import org.opennms.reporting.availability.AvailabilityCalculationException;
 import org.opennms.reporting.availability.AvailabilityCalculator;
 import org.opennms.reporting.availability.render.HTMLReportRenderer;
@@ -333,7 +333,7 @@ public class AvailabilityReportService implements ReportService {
     /**
      * <p>setConfigDao</p>
      *
-     * @param configDao a {@link org.opennms.netmgt.dao.OnmsReportConfigDao} object.
+     * @param configDao a {@link org.opennms.netmgt.dao.api.OnmsReportConfigDao} object.
      */
     public void setConfigDao(OnmsReportConfigDao configDao) {
         m_configDao = configDao;

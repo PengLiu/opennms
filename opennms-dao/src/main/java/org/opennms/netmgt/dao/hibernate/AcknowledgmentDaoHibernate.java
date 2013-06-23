@@ -35,7 +35,7 @@ import java.util.List;
 
 import org.hibernate.ObjectNotFoundException;
 import org.opennms.core.utils.LogUtils;
-import org.opennms.netmgt.dao.AcknowledgmentDao;
+import org.opennms.netmgt.dao.api.AcknowledgmentDao;
 import org.opennms.netmgt.model.AckType;
 import org.opennms.netmgt.model.Acknowledgeable;
 import org.opennms.netmgt.model.OnmsAcknowledgment;

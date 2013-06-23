@@ -35,7 +35,7 @@ import org.opennms.api.reporting.ReportService;
 import org.opennms.core.utils.ThreadCategory;
 import org.opennms.features.reporting.model.basicreport.BasicReportDefinition;
 import org.opennms.features.reporting.repository.global.GlobalReportRepository;
-import org.opennms.netmgt.dao.ReportCatalogDao;
+import org.opennms.netmgt.dao.api.ReportCatalogDao;
 import org.opennms.netmgt.model.OnmsCriteria;
 import org.opennms.netmgt.model.ReportCatalogEntry;
 import org.opennms.reporting.core.svclayer.ReportServiceLocator;

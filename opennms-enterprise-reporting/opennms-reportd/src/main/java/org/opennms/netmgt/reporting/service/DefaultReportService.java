@@ -57,7 +57,7 @@ import org.opennms.core.db.DataSourceFactory;
 import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.config.reportd.Parameter;
 import org.opennms.netmgt.config.reportd.Report;
-import org.opennms.netmgt.dao.ReportCatalogDao;
+import org.opennms.netmgt.dao.api.ReportCatalogDao;
 import org.opennms.netmgt.model.ReportCatalogEntry;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -100,7 +100,7 @@ public class DefaultReportService implements ReportService,InitializingBean {
     /**
      * <p>getReportCatalogDao</p>
      *
-     * @return a {@link org.opennms.netmgt.dao.ReportCatalogDao} object.
+     * @return a {@link org.opennms.netmgt.dao.api.ReportCatalogDao} object.
      */
     public ReportCatalogDao getReportCatalogDao() {
         return m_reportCatalogDao;
@@ -109,7 +109,7 @@ public class DefaultReportService implements ReportService,InitializingBean {
     /**
      * <p>setReportCatalogDao</p>
      *
-     * @param reportCatalogDao a {@link org.opennms.netmgt.dao.ReportCatalogDao} object.
+     * @param reportCatalogDao a {@link org.opennms.netmgt.dao.api.ReportCatalogDao} object.
      */
     public void setReportCatalogDao(ReportCatalogDao reportCatalogDao) {
         this.m_reportCatalogDao = reportCatalogDao;
