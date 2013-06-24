@@ -47,6 +47,7 @@ import org.opennms.core.db.DataSourceFactory;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.core.test.db.MockDatabase;
 import org.opennms.core.test.db.TemporaryDatabase;
+import org.opennms.core.test.db.TemporaryDatabasePostgreSQL;
 import org.opennms.netmgt.dao.DatabasePopulator;
 import org.opennms.netmgt.dao.api.ApplicationDao;
 import org.opennms.netmgt.dao.api.LocationMonitorDao;
@@ -102,7 +103,7 @@ public class RemotePollerAvailabilityRestServiceTest extends AbstractSpringJerse
         
         
         if(USE_EXISTING) {
-            TemporaryDatabase db = new TemporaryDatabase("opennms", true);
+            TemporaryDatabase db = new TemporaryDatabasePostgreSQL("opennms", true);
             db.setPopulateSchema(false);
             db.create();
             DataSourceFactory.setInstance(db);

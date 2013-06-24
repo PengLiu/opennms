@@ -56,12 +56,12 @@ import org.opennms.netmgt.model.events.Parameter;
 import org.opennms.netmgt.xml.event.Event;
 
 /**
- * This class provides additional utility methods on top of the basic {@link TemporaryDatabase}
+ * This class provides additional utility methods on top of the basic {@link TemporaryDatabasePostgreSQL}
  * class. For instance, it can be populated from a {@link MockNetwork}.
  * 
  * @author brozow
  */
-public class MockDatabase extends TemporaryDatabase implements EventWriter {
+public class MockDatabase extends TemporaryDatabasePostgreSQL implements EventWriter {
     public MockDatabase(String dbName) throws Exception {
         this(dbName, true);
     }
