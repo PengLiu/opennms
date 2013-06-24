@@ -60,19 +60,19 @@ import org.springframework.transaction.annotation.Transactional;
 @JUnitTemporaryDatabase(dirtiesContext=false)
 public class CriteriaTest implements InitializingBean {
 
-	@Autowired
+    @Autowired
     private NodeDao m_nodeDao;
 
-	@Autowired
-	private DatabasePopulator m_databasePopulator;
-	
+    @Autowired
+    private DatabasePopulator m_databasePopulator;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         BeanUtils.assertAutowiring(this);
     }
 
     private static boolean m_populated = false;
-    
+
     @BeforeTransaction
     public void setUp() {
         try {
@@ -86,36 +86,35 @@ public class CriteriaTest implements InitializingBean {
         }
     }
 
-	@Test
-	@Transactional
-	public void testSimple() {
+    @Test
+    @Transactional
+    public void testSimple() {
         OnmsCriteria crit = new OnmsCriteria(OnmsNode.class);
         crit.add(Restrictions.eq("label", "node1"));
-        
+
         Collection<OnmsNode> matching = m_nodeDao.findMatching(crit);
-        
+
         assertEquals("Expect a single node with label node1", 1, matching.size());
-        
+
         OnmsNode node = matching.iterator().next();
         assertEquals("node1", node.getLabel());
         assertEquals(4, node.getIpInterfaces().size());
     }
-    
+
     @Test
-	@Transactional
-	public void testComplicated() {
-        OnmsCriteria crit = 
-            new OnmsCriteria(OnmsNode.class)
+    @Transactional
+    public void testComplicated() {
+        OnmsCriteria crit = new OnmsCriteria(OnmsNode.class)
             .createAlias("ipInterfaces", "iface")
             .add(Restrictions.eq("iface.ipAddress", "192.168.2.1"));
-        
+
         Collection<OnmsNode> matching = m_nodeDao.findMatching(crit);
-        
+
         assertEquals("Expect a single node with an interface 192.168.2.1", 1, matching.size());
-        
+
         OnmsNode node = matching.iterator().next();
         assertEquals("node2", node.getLabel());
         assertEquals(3, node.getIpInterfaces().size());
-            
+
     }
 }
