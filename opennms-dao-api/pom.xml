@@ -15,6 +15,10 @@
       <artifactId>org.opennms.core.criteria</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.opennms.core</groupId>
+      <artifactId>org.opennms.core.soa</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.opennms</groupId>
       <artifactId>opennms-config</artifactId>
     </dependency>

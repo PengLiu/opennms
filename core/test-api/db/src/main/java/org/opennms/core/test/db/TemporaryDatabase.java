@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public interface TemporaryDatabase extends DataSource {
+    public static final String TEST_DB_NAME_PREFIX = "opennms_test_";
     public static final String URL_PROPERTY = "mock.db.url";
     public static final String ADMIN_USER_PROPERTY = "mock.db.adminUser";
     public static final String ADMIN_PASSWORD_PROPERTY = "mock.db.adminPassword";

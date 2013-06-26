@@ -59,8 +59,6 @@ import org.springframework.util.StringUtils;
  * @author <a href="mailto:brozow@opennms.org">Mathew Brozowski</a>
  */
 public class TemporaryDatabasePostgreSQL implements TemporaryDatabase {
-    private static final String TEST_DB_NAME_PREFIX = "opennms_test_";
-
     protected static final int MAX_DATABASE_DROP_ATTEMPTS = 10;
     protected static final String DRIVER_PROPERTY = "mock.db.driver";
     private static final Object TEMPLATE1_MUTEX = new Object();

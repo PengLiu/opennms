@@ -18,7 +18,12 @@
   <onmsgi:reference id="jdbcTemplate" interface="org.springframework.jdbc.core.JdbcOperations" />
   <onmsgi:reference id="simpleJdbcTemplate" interface="org.springframework.jdbc.core.simple.SimpleJdbcOperations" />
  -->  
- 
+
+  <bean id="temporaryDatabase" class="org.opennms.core.test.db.TemporaryDatabaseHsqldb">
+    <property name="dataSource" ref="dataSource" />
+    <property name="jdbcTemplate" ref="simpleJdbcTemplate" />
+  </bean>
+
   <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
     <property name="dataSource" ref="dataSource" />
     <property name="packagesToScan">
@@ -30,14 +35,12 @@
     <property name="hibernateProperties">
       <value>
         hibernate.dialect=org.hibernate.dialect.HSQLDialect
-      <!-- 
-        hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-      -->
         hibernate.cache.use_second_level_cache=false
         hibernate.cache=false
         hibernate.cache.use_query_cache=false
         hibernate.jdbc.batch_size=0
-        hibernate.format_sql=true
+        hibernate.format_sql=false
+        hibernate.show_sql=false
         hibernate.hbm2ddl.auto=create
       </value>
     </property>
@@ -50,26 +53,6 @@
 
   <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
     <property name="transactionManager" ref="transactionManager" />
-  </bean>
-  
-  <bean id="distPollerDao" class="org.opennms.netmgt.dao.hibernate.DistPollerDaoHibernate">
-    <property name="sessionFactory" ref="sessionFactory"/>
-  </bean>
-  
-  <bean id="nodeDao" class="org.opennms.netmgt.dao.hibernate.NodeDaoHibernate">
-    <property name="sessionFactory" ref="sessionFactory"/>
-  </bean>
-  
-  <bean id="eventDao" class="org.opennms.netmgt.dao.hibernate.EventDaoHibernate">
-    <property name="sessionFactory" ref="sessionFactory"/>
-  </bean>
-  
-  <bean id="alarmDao" class="org.opennms.netmgt.dao.hibernate.AlarmDaoHibernate">
-    <property name="sessionFactory" ref="sessionFactory"/>
-  </bean>
-  
-  <bean id="ipInterfaceDao" class="org.opennms.netmgt.dao.hibernate.IpInterfaceDaoHibernate">
-    <property name="sessionFactory" ref="sessionFactory"/>
   </bean>
   
   <bean name="eventProxy" class="org.opennms.netmgt.eventd.mock.MockEventIpcManager">

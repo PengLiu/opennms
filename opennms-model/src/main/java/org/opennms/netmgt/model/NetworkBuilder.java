@@ -29,6 +29,7 @@
 package org.opennms.netmgt.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.core.utils.LogUtils;
@@ -49,6 +50,8 @@ public class NetworkBuilder {
 	BeanWrapper m_assetBean;
 
 	OnmsIpInterface m_currentIf;
+
+	OnmsSnmpInterface m_currentSnmpIf;
 
 	OnmsArpInterface m_currentAtIf;
 
@@ -265,10 +268,11 @@ public class NetworkBuilder {
 	 * @return a {@link org.opennms.netmgt.model.SnmpInterfaceBuilder} object.
 	 */
 	public SnmpInterfaceBuilder addSnmpInterface(final int ifIndex) {
-	    OnmsSnmpInterface snmp = new OnmsSnmpInterface(m_currentNode, ifIndex);
-	    // TODO: Should this be done in addSnmpInterface?
-	    snmp.getIpInterfaces().add(m_currentIf);
-	    return new SnmpInterfaceBuilder(snmp);
+	    final OnmsSnmpInterface snmp = new OnmsSnmpInterface(m_currentNode, ifIndex);
+	    if (m_currentIf != null) snmp.getIpInterfaces().add(m_currentIf);
+	    final SnmpInterfaceBuilder snmpInterfaceBuilder = new SnmpInterfaceBuilder(snmp);
+	    m_currentSnmpIf = snmp;
+	    return snmpInterfaceBuilder;
 	}
 
 	/**
@@ -282,9 +286,15 @@ public class NetworkBuilder {
 	        m_currentMonSvc = new OnmsMonitoredService(m_currentIf, serviceType);
 	        return m_currentMonSvc;
 	    } else {
-	        m_currentMonSvc = null;
-	        return null;
+                final Set<OnmsIpInterface> ipInterfaces = m_currentSnmpIf.getIpInterfaces();
+                if (m_currentSnmpIf != null && ipInterfaces != null && ipInterfaces.size() > 0) {
+                    final OnmsIpInterface current = ipInterfaces.toArray(new OnmsIpInterface[]{})[ipInterfaces.size() - 1];
+                    m_currentMonSvc = new OnmsMonitoredService(current, serviceType);
+                    return m_currentMonSvc;
+                }
 	    }
+	    m_currentMonSvc = null;
+	    return null;
 	}
 
 	/**

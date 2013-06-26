@@ -36,6 +36,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.opennms.core.utils.ThreadCategory;
+import org.opennms.netmgt.dao.api.EventdServiceManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;

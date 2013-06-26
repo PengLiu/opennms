@@ -31,6 +31,7 @@ package org.opennms.netmgt.dao;
 import java.util.Date;
 
 import org.opennms.core.utils.InetAddressUtils;
+import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.dao.api.AcknowledgmentDao;
 import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.dao.api.AssetRecordDao;
@@ -59,6 +60,7 @@ import org.opennms.netmgt.model.OnmsArpInterface.StatusType;
 import org.opennms.netmgt.model.OnmsCategory;
 import org.opennms.netmgt.model.OnmsDistPoller;
 import org.opennms.netmgt.model.OnmsEvent;
+import org.opennms.netmgt.model.OnmsIpInterface;
 import org.opennms.netmgt.model.OnmsMap;
 import org.opennms.netmgt.model.OnmsMapElement;
 import org.opennms.netmgt.model.OnmsMonitoredService;
@@ -67,10 +69,11 @@ import org.opennms.netmgt.model.OnmsNotification;
 import org.opennms.netmgt.model.OnmsOutage;
 import org.opennms.netmgt.model.OnmsServiceType;
 import org.opennms.netmgt.model.OnmsSeverity;
+import org.opennms.netmgt.model.OnmsSnmpInterface;
 import org.opennms.netmgt.model.OnmsUserNotification;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 /**
  * Populates a test database with some entities (nodes, interfaces, services).
@@ -118,7 +121,7 @@ public class DatabasePopulator {
     private OnmsMapElementDao m_onmsMapElementDao;
     private DataLinkInterfaceDao m_dataLinkInterfaceDao;
     private AcknowledgmentDao m_acknowledgmentDao;
-    private TransactionTemplate m_transTemplate;
+    private TransactionOperations m_transOperation;
     
     private OnmsNode m_node1;
     private OnmsNode m_node2;
@@ -127,11 +130,19 @@ public class DatabasePopulator {
     private OnmsNode m_node5;
     private OnmsNode m_node6;
     
-    private static boolean POPULATE_DATABASE_IN_SEPARATE_TRANSACTION = true;
+    private boolean m_populateInSeparateTransaction = true;
+
+    public boolean populateInSeparateTransaction() {
+        return m_populateInSeparateTransaction;
+    }
+    
+    public void setPopulateInSeparateTransaction(final boolean pop) {
+        m_populateInSeparateTransaction = pop;
+    }
 
     public void populateDatabase() {
-        if (POPULATE_DATABASE_IN_SEPARATE_TRANSACTION) {
-            m_transTemplate.execute(new TransactionCallback<Object>() {
+        if (m_populateInSeparateTransaction) {
+            m_transOperation.execute(new TransactionCallback<Object>() {
                 @Override
                 public Object doInTransaction(final TransactionStatus status) {
                     doPopulateDatabase();
@@ -143,7 +154,51 @@ public class DatabasePopulator {
         }
     }
 
+    public void resetDatabase() {
+        for (final DataLinkInterface iface : m_dataLinkInterfaceDao.findAll()) {
+            m_dataLinkInterfaceDao.delete(iface);
+        }
+        for (final OnmsOutage outage : m_outageDao.findAll()) {
+            m_outageDao.delete(outage);
+        }
+        for (final OnmsUserNotification not : m_userNotificationDao.findAll()) {
+            m_userNotificationDao.delete(not);
+        }
+        for (final OnmsNotification not : m_notificationDao.findAll()) {
+            m_notificationDao.delete(not);
+        }
+        for (final OnmsAlarm alarm : m_alarmDao.findAll()) {
+            m_alarmDao.delete(alarm);
+        }
+        for (final OnmsEvent event : m_eventDao.findAll()) {
+            m_eventDao.delete(event);
+        }
+        for (final OnmsSnmpInterface iface : m_snmpInterfaceDao.findAll()) {
+            m_snmpInterfaceDao.delete(iface);
+        }
+        for (final OnmsIpInterface iface : m_ipInterfaceDao.findAll()) {
+            m_ipInterfaceDao.delete(iface);
+        }
+        for (final OnmsNode node : m_nodeDao.findAll()) {
+            m_nodeDao.delete(node);
+        }
+        for (final OnmsServiceType service : m_serviceTypeDao.findAll()) {
+            m_serviceTypeDao.delete(service);
+        }
+        m_dataLinkInterfaceDao.flush();
+        m_outageDao.flush();
+        m_userNotificationDao.flush();
+        m_notificationDao.flush();
+        m_alarmDao.flush();
+        m_eventDao.flush();
+        m_snmpInterfaceDao.flush();
+        m_ipInterfaceDao.flush();
+        m_nodeDao.flush();
+        m_serviceTypeDao.flush();
+    }
+
     private void doPopulateDatabase() {
+        LogUtils.debugf(this, "==== DatabasePopulator Starting ====");
         final OnmsDistPoller distPoller = getDistPoller("localhost", "127.0.0.1");
         
         final OnmsCategory ac = getCategory("DEV_AC");
@@ -169,39 +224,43 @@ public class DatabasePopulator {
         builder.addCategory(ops);
         builder.addCategory(catRouter); 
         builder.setBuilding("HQ");
-        builder.addInterface("192.168.1.1").setIsManaged("M").setIsSnmpPrimary("P").addSnmpInterface(1)
+        builder.addSnmpInterface(1)
             .setCollectionEnabled(true)
             .setIfOperStatus(1)
             .setIfSpeed(10000000)
             .setIfDescr("ATM0")
             .setIfAlias("Initial ifAlias value")
-            .setIfType(37);
+            .setIfType(37)
+            .addIpInterface("192.168.1.1").setIsManaged("M").setIsSnmpPrimary("P");
         //getNodeDao().save(builder.getCurrentNode());
         //getNodeDao().flush();
         builder.addService(getServiceType("ICMP"));
         builder.addService(getServiceType("SNMP"));
-        builder.addInterface("192.168.1.2").setIsManaged("M").setIsSnmpPrimary("S").addSnmpInterface(2)
+        builder.addSnmpInterface(2)
             .setCollectionEnabled(true)
             .setIfOperStatus(1)
             .setIfSpeed(10000000)
             .setIfName("eth0")
-            .setIfType(6);
+            .setIfType(6)
+            .addIpInterface("192.168.1.2").setIsManaged("M").setIsSnmpPrimary("S");
         builder.addService(getServiceType("ICMP"));
         builder.addService(getServiceType("HTTP"));
-        builder.addInterface("192.168.1.3").setIsManaged("M").setIsSnmpPrimary("N").addSnmpInterface(3)
+        builder.addSnmpInterface(3)
             .setCollectionEnabled(false)
             .setIfOperStatus(1)
-            .setIfSpeed(10000000);
+            .setIfSpeed(10000000)
+            .addIpInterface("192.168.1.3").setIsManaged("M").setIsSnmpPrimary("N");
         builder.addService(getServiceType("ICMP"));
-        builder.addInterface("fe80:0000:0000:0000:aaaa:bbbb:cccc:dddd%5").setIsManaged("M").setIsSnmpPrimary("N").addSnmpInterface(4)
+        builder.addSnmpInterface(4)
             .setCollectionEnabled(false)
             .setIfOperStatus(1)
-            .setIfSpeed(10000000);
+            .setIfSpeed(10000000)
+            .addIpInterface("fe80:0000:0000:0000:aaaa:bbbb:cccc:dddd%5").setIsManaged("M").setIsSnmpPrimary("N");
         builder.addService(getServiceType("ICMP"));
         final OnmsNode node1 = builder.getCurrentNode();
         getNodeDao().save(builder.getCurrentNode());
         getNodeDao().flush();
-        
+
         builder.addNode("node2").setForeignSource("imported:").setForeignId("2").setType("A");
         builder.addCategory(mid);
         builder.addCategory(catServers);
@@ -376,6 +435,7 @@ public class DatabasePopulator {
         ack.setAckUser("admin");
         getAcknowledgmentDao().save(ack);
         getAcknowledgmentDao().flush();
+        LogUtils.debugf(this, "==== DatabasePopulator Finished ====");
     }
 
     private OnmsCategory getCategory(final String categoryName) {
@@ -629,11 +689,11 @@ public class DatabasePopulator {
         m_acknowledgmentDao = acknowledgmentDao;
     }
 
-    public TransactionTemplate getTransactionTemplate() {
-        return m_transTemplate;
+    public TransactionOperations getTransactionTemplate() {
+        return m_transOperation;
     }
 
-    public void setTransactionTemplate(final TransactionTemplate transactionTemplate) {
-        m_transTemplate = transactionTemplate;
+    public void setTransactionTemplate(final TransactionOperations transactionOperation) {
+        m_transOperation = transactionOperation;
     }
 }

@@ -44,6 +44,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.opennms.core.concurrent.LogPreservingThreadFactory;
+import org.opennms.core.utils.LogUtils;
 import org.opennms.core.utils.ThreadCategory;
 import org.opennms.netmgt.model.events.EventIpcBroadcaster;
 import org.opennms.netmgt.model.events.EventIpcManager;
@@ -242,6 +243,8 @@ public class EventIpcManagerDefaultImpl implements EventIpcManager, EventIpcBroa
     @Override
     public void sendNow(Log eventLog) {
         Assert.notNull(eventLog, "eventLog argument cannot be null");
+
+        LogUtils.debugf(this, "sending: " + eventLog);
 
         try {
             m_eventHandlerPool.execute(m_eventHandler.createRunnable(eventLog));

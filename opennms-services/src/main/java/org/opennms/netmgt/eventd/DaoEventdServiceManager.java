@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opennms.core.utils.ThreadCategory;
+import org.opennms.netmgt.dao.api.EventdServiceManager;
 import org.opennms.netmgt.dao.api.ServiceTypeDao;
 import org.opennms.netmgt.model.OnmsServiceType;
 import org.springframework.beans.factory.InitializingBean;
