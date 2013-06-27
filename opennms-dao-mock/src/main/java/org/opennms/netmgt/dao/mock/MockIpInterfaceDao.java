@@ -15,10 +15,28 @@ public class MockIpInterfaceDao extends AbstractMockDao<OnmsIpInterface, Integer
 
     @Override
     public void save(final OnmsIpInterface iface) {
+        super.save(iface);
+        updateSubObjects(iface);
+    }
+
+    @Override
+    public void update(final OnmsIpInterface iface) {
+        super.update(iface);
+        updateSubObjects(iface);
+    }
+
+    @Override
+    public void flush() {
+        super.flush();
+        for (final OnmsIpInterface iface : findAll()) {
+            updateSubObjects(iface);
+        }
+    }
+
+    private void updateSubObjects(final OnmsIpInterface iface) {
         for (final OnmsMonitoredService svc : iface.getMonitoredServices()) {
             getMonitoredServiceDao().saveOrUpdate(svc);
         }
-        super.save(iface);
     }
 
     @Override
@@ -39,14 +57,26 @@ public class MockIpInterfaceDao extends AbstractMockDao<OnmsIpInterface, Integer
         return iface.getId();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public OnmsIpInterface get(final OnmsNode node, final String ipAddress) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsIpInterface iface : findAll()) {
+            if (node.equals(iface.getNode()) && ipAddress.equals(iface.getIpAddressAsString())) {
+                return iface;
+            }
+        }
+        return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public OnmsIpInterface findByNodeIdAndIpAddress(final Integer nodeId, final String ipAddress) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsIpInterface iface : findAll()) {
+            if (iface.getNode().getId().equals(nodeId) && ipAddress.equals(iface.getIpAddressAsString())) {
+                return iface;
+            }
+        }
+        return null;
     }
 
     @Override

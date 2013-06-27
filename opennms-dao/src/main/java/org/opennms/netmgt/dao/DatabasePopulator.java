@@ -155,6 +155,7 @@ public class DatabasePopulator {
     }
 
     public void resetDatabase() {
+        LogUtils.debugf(this, "==== DatabasePopulator Reset ====");
         for (final DataLinkInterface iface : m_dataLinkInterfaceDao.findAll()) {
             m_dataLinkInterfaceDao.delete(iface);
         }
@@ -195,6 +196,7 @@ public class DatabasePopulator {
         m_ipInterfaceDao.flush();
         m_nodeDao.flush();
         m_serviceTypeDao.flush();
+        LogUtils.debugf(this, "==== DatabasePopulator Reset Finished ====");
     }
 
     private void doPopulateDatabase() {

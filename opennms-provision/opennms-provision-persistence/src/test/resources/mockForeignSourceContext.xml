@@ -24,6 +24,20 @@
   	<property name="deployedForeignSourceRepository" ref="deployedForeignSourceRepository" />
   </bean>
 
+  <bean id="fastPendingForeignSourceRepository" class="org.opennms.netmgt.provision.persist.MockForeignSourceRepository">
+  	<qualifier value="fastPending" />
+  </bean>
+
+  <bean id="fastDeployedForeignSourceRepository" class="org.opennms.netmgt.provision.persist.MockForeignSourceRepository">
+  	<qualifier value="fastDeployed" />
+  </bean>
+
+  <bean id="fastFusedForeignSourceRepository" class="org.opennms.netmgt.provision.persist.FusedForeignSourceRepository">
+  	<qualifier value="fastFused" />
+  	<property name="pendingForeignSourceRepository" ref="fastPendingForeignSourceRepository" />
+  	<property name="deployedForeignSourceRepository" ref="fastDeployedForeignSourceRepository" />
+  </bean>
+
   <bean id="cachingForeignSourceRepository" class="org.opennms.netmgt.provision.persist.MockForeignSourceRepository">
   	<qualifier value="caching" />
   </bean>
@@ -35,4 +49,5 @@
   <bean id="fastForeignSourceRepository" class="org.opennms.netmgt.provision.persist.MockForeignSourceRepository">
   	<qualifier value="fast" />
   </bean>
+
 </beans>

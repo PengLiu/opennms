@@ -3,6 +3,7 @@ package org.opennms.netmgt.dao.mock;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
+import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsSnmpInterface;
 
 public class MockSnmpInterfaceDao extends AbstractMockDao<OnmsSnmpInterface, Integer> implements SnmpInterfaceDao {
@@ -20,12 +21,23 @@ public class MockSnmpInterfaceDao extends AbstractMockDao<OnmsSnmpInterface, Int
 
     @Override
     public OnmsSnmpInterface findByNodeIdAndIfIndex(final Integer nodeId, final Integer ifIndex) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsSnmpInterface iface : findAll()) {
+            if (nodeId.equals(iface.getNode().getId()) && ifIndex.equals(iface.getIfIndex())) {
+                return iface;
+            }
+        }
+        return null;
     }
 
     @Override
     public OnmsSnmpInterface findByForeignKeyAndIfIndex(final String foreignSource, final String foreignId, final Integer ifIndex) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsSnmpInterface iface : findAll()) {
+            final OnmsNode node = iface.getNode();
+            if (foreignSource.equals(node.getForeignSource()) && foreignId.equals(node.getForeignId()) && ifIndex.equals(iface.getIfIndex())) {
+                return iface;
+            }
+        }
+        return null;
     }
 
 }

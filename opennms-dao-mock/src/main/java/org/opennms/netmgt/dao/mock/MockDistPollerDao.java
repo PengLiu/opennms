@@ -13,6 +13,6 @@ public class MockDistPollerDao extends AbstractMockDao<OnmsDistPoller,String> im
 
     @Override
     protected String getId(final OnmsDistPoller dp) {
-        return dp.getName();
+        return dp == null? null : dp.getName();
     }
 }

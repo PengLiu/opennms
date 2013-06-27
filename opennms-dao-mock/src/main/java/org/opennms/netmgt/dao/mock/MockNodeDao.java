@@ -1,12 +1,16 @@
 package org.opennms.netmgt.dao.mock;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.opennms.netmgt.dao.api.NodeDao;
+import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.model.OnmsCategory;
 import org.opennms.netmgt.model.OnmsDistPoller;
 import org.opennms.netmgt.model.OnmsIpInterface;
@@ -39,20 +43,49 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
     }
 
     @Override
+    public void update(final OnmsNode node) {
+        if (node == null) return;
+        super.update(node);
+        updateSubObjects(node);
+    }
+    
+    @Override
     public void save(final OnmsNode node) {
         if (node == null) return;
+        super.save(node);
+        updateSubObjects(node);
+    }
+
+    @Override
+    public void flush() {
+        super.flush();
+        for (final OnmsNode node : findAll()) {
+            updateSubObjects(node);
+        }
+    }
+
+    private void updateSubObjects(final OnmsNode node) {
         getAssetRecordDao().saveOrUpdate(node.getAssetRecord());
         for (final OnmsCategory cat : node.getCategories()) {
             getCategoryDao().saveOrUpdate(cat);
         }
         getDistPollerDao().saveOrUpdate(node.getDistPoller());
+        final SnmpInterfaceDao snmpInterfaceDao = getSnmpInterfaceDao();
+        for (final OnmsSnmpInterface iface : node.getSnmpInterfaces()) {
+            snmpInterfaceDao.saveOrUpdate(iface);
+        }
+        /* not sure if this is necessary */
+        for (final OnmsIpInterface iface : getIpInterfaceDao().findAll()) {
+            final OnmsSnmpInterface snmpInterface = iface.getSnmpInterface();
+            if (snmpInterface != null && snmpInterface.getId() != null) {
+                if (snmpInterfaceDao.get(snmpInterface.getId()) == null) {
+                    getIpInterfaceDao().delete(iface);
+                }
+            }
+        }
         for (final OnmsIpInterface iface : node.getIpInterfaces()) {
             getIpInterfaceDao().saveOrUpdate(iface);
         }
-        for (final OnmsSnmpInterface iface : node.getSnmpInterfaces()) {
-            getSnmpInterfaceDao().saveOrUpdate(iface);
-        }
-        super.save(node);
     }
 
     @Override
@@ -62,27 +95,46 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
 
     @Override
     public String getLabelForId(final Integer id) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final OnmsNode node = get(id);
+        return node == null? null : node.getLabel();
     }
 
     @Override
     public List<OnmsNode> findByLabel(final String label) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAll()) {
+            if (label.equals(node.getLabel())) {
+                nodes.add(node);
+            }
+        }
+        return nodes;
     }
 
     @Override
     public List<OnmsNode> findNodes(final OnmsDistPoller dp) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAll()) {
+            if (node.getDistPoller().equals(dp)) {
+                nodes.add(node);
+            }
+        }
+        return nodes;
     }
 
     @Override
     public OnmsNode getHierarchy(final Integer id) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        return get(id);
     }
 
     @Override
     public Map<String, Integer> getForeignIdToNodeIdMap(final String foreignSource) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final Map<String,Integer> nodes = new HashMap<String,Integer>();
+        for (final OnmsNode node : findAll()) {
+            if (foreignSource.equals(node.getForeignSource())) {
+                nodes.put(node.getForeignId(), node.getId());
+            }
+        }
+        return nodes;
     }
 
     @Override
@@ -97,12 +149,26 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
 
     @Override
     public List<OnmsNode> findByCategory(final OnmsCategory category) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAll()) {
+            if (node.getCategories().contains(category)) {
+                nodes.add(node);
+            }
+        }
+        return nodes;
     }
 
     @Override
     public List<OnmsNode> findAllByCategoryList(final Collection<OnmsCategory> categories) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAll()) {
+            for (final OnmsCategory category : categories) {
+                if (node.getCategories().contains(category)) {
+                    nodes.add(node);
+                }
+            }
+        }
+        return nodes;
     }
 
     @Override
@@ -112,47 +178,97 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
 
     @Override
     public List<OnmsNode> findByForeignSource(final String foreignSource) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAll()) {
+            if (foreignSource.equals(node.getForeignSource())) {
+                nodes.add(node);
+            }
+        }
+        return nodes;
     }
 
     @Override
     public OnmsNode findByForeignId(final String foreignSource, final String foreignId) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsNode node : findByForeignSource(foreignSource)) {
+            if (foreignId.equals(node.getForeignId())) {
+                return node;
+            }
+        }
+        return null;
     }
 
     @Override
-    public int getNodeCountForForeignSource(final String groupName) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+    public int getNodeCountForForeignSource(final String foreignSource) {
+        return findByForeignSource(foreignSource).size();
     }
 
     @Override
     public List<OnmsNode> findAllProvisionedNodes() {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAll()) {
+            if (node.getForeignSource() != null) nodes.add(node);
+        }
+        return nodes;
     }
 
     @Override
     public List<OnmsIpInterface> findObsoleteIpInterfaces(final Integer nodeId, final Date scanStamp) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsIpInterface> ifaces = new ArrayList<OnmsIpInterface>();
+        final OnmsNode node = get(nodeId);
+        if (node == null) return ifaces;
+        
+        for (final OnmsIpInterface iface : node.getIpInterfaces()) {
+            if (iface.getIpLastCapsdPoll() == null
+                    || iface.getIpLastCapsdPoll().before(scanStamp)) ifaces.add(iface);
+        }
+
+        return ifaces;
     }
 
     @Override
     public void deleteObsoleteInterfaces(final Integer nodeId, final Date scanStamp) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final OnmsNode node = get(nodeId);
+        if (node == null) return;
+
+        for (final OnmsIpInterface iface : findObsoleteIpInterfaces(nodeId, scanStamp)) {
+            node.getIpInterfaces().remove(iface);
+            getIpInterfaceDao().delete(iface.getId());
+        }
+        final Collection<OnmsSnmpInterface> snmpInterfaces = Collections.unmodifiableCollection(node.getSnmpInterfaces());
+        for (final OnmsSnmpInterface iface : snmpInterfaces) {
+            if (iface.getLastCapsdPoll() == null
+                    || iface.getLastCapsdPoll().before(scanStamp)) {
+                snmpInterfaces.remove(iface);
+                getSnmpInterfaceDao().delete(iface.getId());
+            }
+        }
     }
 
     @Override
     public void updateNodeScanStamp(final Integer nodeId, final Date scanStamp) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        get(nodeId).setLastCapsdPoll(scanStamp);
     }
 
     @Override
     public Collection<Integer> getNodeIds() {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<Integer> ids = new ArrayList<Integer>();
+        for (final OnmsNode node : findAll()) {
+            ids.add(node.getId());
+        }
+        return ids;
     }
 
     @Override
     public List<OnmsNode> findByForeignSourceAndIpAddress(final String foreignSource, final String ipAddress) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAll()) {
+            if (foreignSource.equals(node.getForeignSource())) {
+                final OnmsIpInterface iface = node.getIpInterfaceByIpAddress(ipAddress);
+                if (iface != null) nodes.add(node);
+                continue;
+            }
+        }
+        return nodes;
     }
 
     @Override
@@ -162,12 +278,32 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
 
     @Override
     public Integer getNextNodeId(final Integer nodeId) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        Integer next = null;
+        for (final OnmsNode node : findAll()) {
+            if (node.getId() > nodeId) {
+                if (next == null || (node.getId() < next)) {
+                    next = node.getId();
+                }
+            }
+        }
+        return next;
     }
 
     @Override
     public Integer getPreviousNodeId(final Integer nodeId) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        Integer previous = null;
+        for (final OnmsNode node : findAll()) {
+            if (node.getId() < nodeId) {
+                if (previous == null || (previous < node.getId())) {
+                    previous = node.getId();
+                }
+            }
+        }
+        return previous;
+    }
+
+    public int getNextNodeId() {
+        return m_id.get() + 1;
     }
 
 }

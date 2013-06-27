@@ -21,8 +21,23 @@ public class MockCategoryDao extends AbstractMockDao<OnmsCategory, Integer> impl
     }
 
     @Override
+    public void save(final OnmsCategory cat) {
+        if (cat == null) return;
+        final String categoryName = cat.getName();
+        if (categoryName == null) return;
+        final OnmsCategory existingCategory = findByName(categoryName);
+        if (existingCategory == null) {
+            super.save(cat);
+        } else {
+            cat.setId(existingCategory.getId());
+            cat.setDescription(existingCategory.getDescription());
+            cat.setAuthorizedGroups(existingCategory.getAuthorizedGroups());
+        }
+    }
+
+    @Override
     public OnmsCategory findByName(final String name) {
-        for (final OnmsCategory cat : getValues()) {
+        for (final OnmsCategory cat : findAll()) {
             if (name.equals(cat.getName())) {
                 return cat;
             }
@@ -32,7 +47,7 @@ public class MockCategoryDao extends AbstractMockDao<OnmsCategory, Integer> impl
 
     @Override
     public OnmsCategory findByName(final String name, final boolean useCached) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        return findByName(name);
     }
 
     @Override

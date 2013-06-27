@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.opennms.netmgt.dao.api.MonitoredServiceDao;
 import org.opennms.netmgt.model.OnmsApplication;
 import org.opennms.netmgt.model.OnmsMonitoredService;
+import org.opennms.netmgt.model.OnmsServiceType;
 import org.opennms.netmgt.model.ServiceSelector;
 
 public class MockMonitoredServiceDao extends AbstractMockDao<OnmsMonitoredService, Integer> implements MonitoredServiceDao {
@@ -15,8 +16,31 @@ public class MockMonitoredServiceDao extends AbstractMockDao<OnmsMonitoredServic
 
     @Override
     public void save(final OnmsMonitoredService svc) {
-        getServiceTypeDao().saveOrUpdate(svc.getServiceType());
         super.save(svc);
+        updateSubObjects(svc);
+    }
+
+    @Override
+    public void update(final OnmsMonitoredService svc) {
+        super.update(svc);
+        updateSubObjects(svc);
+    }
+
+    private void updateSubObjects(final OnmsMonitoredService svc) {
+        final OnmsServiceType serviceType = svc.getServiceType();
+        final OnmsServiceType existingServiceType = getServiceTypeDao().findByName(serviceType.getName());
+        if (existingServiceType != null && existingServiceType.getId() != serviceType.getId()) {
+            svc.setServiceType(existingServiceType);
+        }
+        getServiceTypeDao().saveOrUpdate(svc.getServiceType());
+    }
+
+    @Override
+    public void flush() {
+        super.flush();
+        for (final OnmsMonitoredService svc : findAll()) {
+            updateSubObjects(svc);
+        }
     }
 
     @Override
@@ -46,7 +70,7 @@ public class MockMonitoredServiceDao extends AbstractMockDao<OnmsMonitoredServic
 
     @Override
     public OnmsMonitoredService get(final Integer nodeId, final InetAddress ipAddress, final String svcName) {
-        for (final OnmsMonitoredService svc : getValues()) {
+        for (final OnmsMonitoredService svc : findAll()) {
             if (nodeId.equals(svc.getNodeId()) && ipAddress.equals(svc.getIpAddress()) && svcName.equals(svc.getServiceName())) {
                 return svc;
             }

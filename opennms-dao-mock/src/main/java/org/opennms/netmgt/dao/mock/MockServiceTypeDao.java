@@ -9,8 +9,8 @@ public class MockServiceTypeDao extends AbstractMockDao<OnmsServiceType, Integer
     private AtomicInteger m_id = new AtomicInteger(0);
 
     @Override
-    protected void generateId(final OnmsServiceType st) {
-        st.setId(m_id.incrementAndGet());
+    protected void generateId(final OnmsServiceType service) {
+        service.setId(m_id.incrementAndGet());
     }
 
     @Override
@@ -21,7 +21,7 @@ public class MockServiceTypeDao extends AbstractMockDao<OnmsServiceType, Integer
     @Override
     public OnmsServiceType findByName(final String name) {
         if (name == null) return null;
-        for (final OnmsServiceType serviceType : getValues()) {
+        for (final OnmsServiceType serviceType : findAll()) {
             if (name.equals(serviceType.getName())) {
                 return serviceType;
             }

@@ -151,17 +151,19 @@ public abstract class SimpleQueuedProvisioningAdapter implements ProvisioningAda
      * (non-Javadoc)
      * @see org.opennms.netmgt.provision.ProvisioningAdapter#addNode(int)
      */
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @return */
     @Override
-    public final void addNode(int nodeId) {
+    public final ScheduledFuture<?> addNode(int nodeId) {
         AdapterOperation op = new AdapterOperation(Integer.valueOf(nodeId), AdapterOperationType.ADD, 
                                                    createScheduleForNode(nodeId, AdapterOperationType.ADD));
         
         if (m_operationQueue.enqueOperation(nodeId, op)) {
-            op.schedule(m_executorService, true);
+            return op.schedule(m_executorService, true);
         } else {
             //TODO: log something
         }
+        return null;
     }
 
     /*
@@ -170,14 +172,15 @@ public abstract class SimpleQueuedProvisioningAdapter implements ProvisioningAda
      */
     /** {@inheritDoc} */
     @Override
-    public final void updateNode(int nodeId) {
+    public final ScheduledFuture<?> updateNode(int nodeId) {
         AdapterOperation op = new AdapterOperation(Integer.valueOf(nodeId), AdapterOperationType.UPDATE, 
                                                    createScheduleForNode(nodeId, AdapterOperationType.UPDATE));
         if (m_operationQueue.enqueOperation(nodeId, op)) {
-            op.schedule(m_executorService, true);
+            return op.schedule(m_executorService, true);
         } else {
             //TODO: log something
         }
+        return null;
     }
     
     /*
@@ -186,7 +189,7 @@ public abstract class SimpleQueuedProvisioningAdapter implements ProvisioningAda
      */
     /** {@inheritDoc} */
     @Override
-    public final void deleteNode(int nodeId) {
+    public final ScheduledFuture<?> deleteNode(int nodeId) {
         AdapterOperation op = new AdapterOperation(Integer.valueOf(nodeId), AdapterOperationType.DELETE, 
                                                    createScheduleForNode(nodeId, AdapterOperationType.DELETE));
         if (m_operationQueue.enqueOperation(nodeId, op)) {
@@ -194,6 +197,7 @@ public abstract class SimpleQueuedProvisioningAdapter implements ProvisioningAda
         } else {
             //TODO: log something
         }
+        return null;
     }
     
     /*
@@ -202,7 +206,7 @@ public abstract class SimpleQueuedProvisioningAdapter implements ProvisioningAda
      */
     /** {@inheritDoc} */
     @Override
-    public final void nodeConfigChanged(int nodeId) {
+    public final ScheduledFuture<?> nodeConfigChanged(int nodeId) {
         AdapterOperation op = new AdapterOperation(Integer.valueOf(nodeId), AdapterOperationType.CONFIG_CHANGE, 
                                                    createScheduleForNode(nodeId, AdapterOperationType.CONFIG_CHANGE));
         if (m_operationQueue.enqueOperation(nodeId, op)) {
@@ -210,6 +214,7 @@ public abstract class SimpleQueuedProvisioningAdapter implements ProvisioningAda
         } else {
             //TODO: log something
         }
+        return null;
     }
     
     /**

@@ -11,6 +11,14 @@
         http://xmlns.opennms.org/xsd/spring/onms-osgi http://xmlns.opennms.org/xsd/spring/onms-osgi.xsd
     ">
 
+    <bean id="transactionManager" class="org.opennms.netmgt.dao.mock.MockTransactionManager" />
+    <onmsgi:service interface="org.springframework.transaction.PlatformTransactionManager" ref="transactionManager" />
+
+    <bean id="transactionTemplate" class="org.opennms.netmgt.dao.mock.MockTransactionTemplate">
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+    <onmsgi:service interface="org.springframework.transaction.support.TransactionOperations" ref="transactionTemplate" />
+
     <bean id="acknowledgmentDao" class="org.opennms.netmgt.dao.mock.MockAcknowledgmentDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.AcknowledgmentDao" ref="acknowledgmentDao" />
 
@@ -93,9 +101,7 @@
     <bean id="nodeDao" class="org.opennms.netmgt.dao.mock.MockNodeDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.NodeDao" ref="nodeDao" />
 
-    <bean id="deployedForeignSourceRepository" class="org.opennms.netmgt.dao.mock.MockNodeDao" />
-    <onmsgi:service interface="org.opennms.netmgt.dao.api.NodeDao" ref="nodeDao" />
-
+    <!-- 
     <bean id="resourceDao" class="org.opennms.netmgt.dao.support.DefaultResourceDao">
         <property name="nodeDao" ref="nodeDao" />
         <property name="locationMonitorDao" ref="locationMonitorDao" />
@@ -109,6 +115,7 @@
         <property name="staticMethod"><value>org.opennms.netmgt.config.CollectdConfigFactory.init</value></property>
     </bean>
     <bean id="collectdConfig" class="org.opennms.netmgt.config.CollectdConfigFactory" depends-on="collectdConfig-init" factory-method="getInstance"/>
+    -->
 
     <bean id="dataCollectionConfigDao" class="org.opennms.netmgt.dao.mock.MockDataCollectionConfigDao" />
     <bean id="dataCollectionConfig-init" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -123,9 +130,10 @@
     </bean>
     <bean id="dataCollectionConfig" class="org.opennms.netmgt.config.DataCollectionConfigFactory" depends-on="dataCollectionConfig-init" factory-method="getInstance" />
     <onmsgi:service interface="org.opennms.netmgt.config.DataCollectionConfigDao" ref="dataCollectionConfigDao" />
-    
+
     <bean id="databasePopulator" class="org.opennms.netmgt.dao.DatabasePopulator">
-        <property name="populateInSeparateTransaction" value="false" />
+        <property name="populateInSeparateTransaction" value="true" />
+        <property name="transactionTemplate" ref="transactionTemplate" />
         <property name="distPollerDao" ref="distPollerDao" />
         <property name="nodeDao" ref="nodeDao" />
         <property name="ipInterfaceDao" ref="ipInterfaceDao" />

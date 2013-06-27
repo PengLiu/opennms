@@ -26,9 +26,11 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.mock;
+package org.opennms.netmgt.dao.mock;
 
-import org.opennms.core.test.MockPlatformTransactionManager;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -36,10 +38,12 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author <a href="mailto:brozow@opennms.org">Mathew Brozowski</a>
  */
 public class MockTransactionTemplate extends TransactionTemplate {
-    private static final long serialVersionUID = -2067133200875390660L;
+    private static final long serialVersionUID = 2605665424557979322L;
 
-    public MockTransactionTemplate() {
-        super(new MockPlatformTransactionManager());
+    public <T> T execute(final TransactionCallback<T> action) throws TransactionException {
+        final TransactionStatus status = getTransactionManager().getTransaction(this);
+        final T result = action.doInTransaction(status);
+        getTransactionManager().commit(status);
+        return result;
     }
-
 }

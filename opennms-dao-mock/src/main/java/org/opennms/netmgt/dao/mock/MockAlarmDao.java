@@ -12,11 +12,21 @@ public class MockAlarmDao extends AbstractMockDao<OnmsAlarm, Integer> implements
 
     @Override
     public void save(final OnmsAlarm alarm) {
+        super.save(alarm);
+        updateSubObjects(alarm);
+    }
+
+    @Override
+    public void update(final OnmsAlarm alarm) {
+        super.update(alarm);
+        updateSubObjects(alarm);
+    }
+
+    private void updateSubObjects(final OnmsAlarm alarm) {
         getDistPollerDao().save(alarm.getDistPoller());
         getEventDao().save(alarm.getLastEvent());
         getNodeDao().save(alarm.getNode());
         getServiceTypeDao().save(alarm.getServiceType());
-        super.save(alarm);
     }
 
     @Override

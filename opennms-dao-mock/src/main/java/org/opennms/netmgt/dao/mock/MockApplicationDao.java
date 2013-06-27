@@ -21,7 +21,7 @@ public class MockApplicationDao extends AbstractMockDao<OnmsApplication, Integer
     @Override
     public OnmsApplication findByName(final String label) {
         if (label == null) return null;
-        for (final OnmsApplication app : getValues()) {
+        for (final OnmsApplication app : findAll()) {
             if (label.equals(app.getName())) {
                 return app;
             }
