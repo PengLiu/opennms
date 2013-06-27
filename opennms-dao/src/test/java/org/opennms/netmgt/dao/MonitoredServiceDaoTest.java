@@ -80,29 +80,24 @@ public class MonitoredServiceDaoTest implements InitializingBean {
 
     @Test
     @Transactional
-    @JUnitTemporaryDatabase
     public void testLazy() {
-
-        List<OnmsMonitoredService> allSvcs = m_monitoredServiceDao.findAll();
+        final List<OnmsMonitoredService> allSvcs = m_monitoredServiceDao.findAll();
         assertTrue(allSvcs.size() > 1);
 
-        OnmsMonitoredService svc = allSvcs.iterator().next();
+        final OnmsMonitoredService svc = allSvcs.iterator().next();
         assertEquals(addr("192.168.1.1"), svc.getIpAddress());
         assertEquals(1, svc.getIfIndex().intValue());
-        assertEquals(1, svc.getIpInterface().getNode().getId().intValue());
+        assertEquals(m_databasePopulator.getNode1().getId(), svc.getIpInterface().getNode().getId());
         assertEquals("M", svc.getIpInterface().getIsManaged());
-        //assertEquals("SNMP", svc.getServiceType().getName());
-
     }
 
     @Test
     @Transactional
-    @JUnitTemporaryDatabase
     public void testGetByCompositeId() {
-        OnmsMonitoredService monSvc = m_monitoredServiceDao.get(m_databasePopulator.getNode1().getId(), addr("192.168.1.1"), "SNMP");
+        final OnmsMonitoredService monSvc = m_monitoredServiceDao.get(m_databasePopulator.getNode1().getId(), addr("192.168.1.1"), "SNMP");
         assertNotNull(monSvc);
 
-        OnmsMonitoredService monSvc2 = m_monitoredServiceDao.get(m_databasePopulator.getNode1().getId(), addr("192.168.1.1"), monSvc.getIfIndex(), monSvc.getServiceId());
+        final OnmsMonitoredService monSvc2 = m_monitoredServiceDao.get(m_databasePopulator.getNode1().getId(), addr("192.168.1.1"), monSvc.getIfIndex(), monSvc.getServiceId());
         assertNotNull(monSvc2);
 
     }
