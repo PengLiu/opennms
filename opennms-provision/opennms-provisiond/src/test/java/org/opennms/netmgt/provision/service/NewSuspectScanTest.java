@@ -36,7 +36,6 @@ import java.util.concurrent.ExecutionException;
 
 import org.joda.time.Duration;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,6 +68,7 @@ import org.opennms.netmgt.provision.persist.foreignsource.PluginConfig;
 import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -87,7 +87,12 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/mockForeignSourceContext.xml",
         "classpath:/importerServiceTest.xml"
 })
-@JUnitConfigurationEnvironment
+@JUnitConfigurationEnvironment(systemProperties={
+        "org.opennms.provisiond.enableDiscovery=true",
+        "importer.foreign-source.dir=target/foreign-sources",
+        "importer.requisition.dir=target/imports"
+})
+@DirtiesContext
 public class NewSuspectScanTest implements InitializingBean {
 
     @Autowired
@@ -124,8 +129,6 @@ public class NewSuspectScanTest implements InitializingBean {
 
     private ForeignSource m_foreignSource;
 
-    static private String s_initialDiscoveryEnabledValue;
-
     @Override
     public void afterPropertiesSet() throws Exception {
         BeanUtils.assertAutowiring(this);
@@ -139,22 +142,6 @@ public class NewSuspectScanTest implements InitializingBean {
         props.setProperty("log4j.logger.org.hibernate.SQL", "DEBUG");
 
         MockLogAppender.setupLogging(props);
-    }
-
-    @BeforeClass
-    public static void setEnableDiscovery() {
-        s_initialDiscoveryEnabledValue = System.getProperty("org.opennms.provisiond.enableDiscovery");
-        System.setProperty("org.opennms.provisiond.enableDiscovery", "true");
-
-    }
-
-    @AfterClass
-    public static void resetEnableDiscovery() {
-        if (s_initialDiscoveryEnabledValue == null) {
-            System.getProperties().remove("org.opennms.provisiond.enableDiscovery");
-        } else {
-            System.setProperty("org.opennms.provisiond.enableDiscovery", s_initialDiscoveryEnabledValue);
-        }
     }
 
     @Before
@@ -176,13 +163,13 @@ public class NewSuspectScanTest implements InitializingBean {
 
         m_provisionService.setForeignSourceRepository(m_foreignSourceRepository);
 
-        m_provisioner.setEventForwarder(m_eventSubscriber);
         m_provisioner.start();
     }
 
     @After
     public void tearDown() {
         m_populator.resetDatabase();
+        m_provisioner.waitFor();
     }
 
     @Test(timeout=300000)
@@ -303,12 +290,12 @@ public class NewSuspectScanTest implements InitializingBean {
         anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(ip).setService("SNMP").getEvent());
         anticipator.anticipateEvent(new EventBuilder(EventConstants.REINITIALIZE_PRIMARY_SNMP_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(ip).getEvent());
         anticipator.anticipateEvent(new EventBuilder(EventConstants.PROVISION_SCAN_COMPLETE_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
-        anticipator.setDiscardUnanticipated(true);
 
         final NewSuspectScan scan = m_provisioner.createNewSuspectScan(ip);
         runScan(scan);
 
         anticipator.verifyAnticipated(200000, 0, 2000, 0, 0);
+        m_provisioner.waitFor();
 
         //Verify distpoller count
         assertEquals(1, getDistPollerDao().countAll());

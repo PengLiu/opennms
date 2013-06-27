@@ -159,4 +159,15 @@
         <property name="dataLinkInterfaceDao" ref="dataLinkInterfaceDao" />
     </bean>
 
+    <bean id="provisionerTestExecutor" class="java.util.concurrent.ScheduledThreadPoolExecutor">
+        <constructor-arg value="1" />
+    </bean>
+
+    <!-- 
+    <alias name="provisionerTestExecutor" alias="importExecutor" />
+    <alias name="provisionerTestExecutor" alias="scanExecutor" />
+    <alias name="provisionerTestExecutor" alias="writeExecutor" />
+    <alias name="provisionerTestExecutor" alias="scheduledExecutor" />
+    -->
+
 </beans>

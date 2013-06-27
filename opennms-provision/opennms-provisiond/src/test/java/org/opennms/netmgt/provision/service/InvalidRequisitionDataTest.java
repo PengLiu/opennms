@@ -123,8 +123,9 @@ public class InvalidRequisitionDataTest implements InitializingBean {
     public void tearDown() throws Exception {
         m_anticipator.verifyAnticipated();
         m_populator.resetDatabase();
+        m_provisioner.waitFor();
     }
-    
+
     @Test
     public void testImportInvalidAsset() throws Exception {
         final int nextNodeId = m_nodeDao.getNextNodeId();
@@ -141,6 +142,7 @@ public class InvalidRequisitionDataTest implements InitializingBean {
         // This requisition has an asset on some nodes called "pollercategory".
         // Change it to "pollerCategory" (capital 'C') and the test passes...
         m_provisioner.doImport(invalidAssetFieldResource.getURL().toString(), true);
+        m_anticipator.verifyAnticipated();
 
         // should still import the node, just skip the asset field
         assertEquals(1, m_nodeDao.countAll());
@@ -170,6 +172,7 @@ public class InvalidRequisitionDataTest implements InitializingBean {
         // OpenNMS 1.10. We want to preserve backwards compatibility so make sure that the
         // field still works.
         m_provisioner.doImport(resource.getURL().toString(), true);
+        m_anticipator.verifyAnticipated();
 
         // should still import the node, just skip the asset field
         assertEquals(1, m_nodeDao.countAll());
@@ -190,9 +193,11 @@ public class InvalidRequisitionDataTest implements InitializingBean {
         // This requisition has a "foreign-source" on the node tag, which is invalid,
         // foreign-source only belongs on the top-level model-import tag.
         m_provisioner.doImport(invalidRequisitionResource.getURL().toString(), true);
+        m_anticipator.verifyAnticipated();
 
         // should fail to import the node, it should bomb if the requisition is unparseable
         assertEquals(0, m_nodeDao.countAll());
+        
     }
 
     private Event getStarted(final Resource resource) {

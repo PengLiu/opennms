@@ -34,7 +34,9 @@ import static org.junit.Assert.assertTrue;
 import java.net.InetAddress;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,9 +53,10 @@ import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.EventConstants;
 import org.opennms.netmgt.config.SnmpPeerFactory;
-import org.opennms.netmgt.dao.api.NodeDao;
+import org.opennms.netmgt.dao.DatabasePopulator;
 import org.opennms.netmgt.dao.mock.EventAnticipator;
 import org.opennms.netmgt.dao.mock.MockEventIpcManager;
+import org.opennms.netmgt.dao.mock.MockNodeDao;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.events.EventBuilder;
 import org.opennms.netmgt.provision.persist.MockForeignSourceRepository;
@@ -66,6 +69,7 @@ import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OpenNMSJUnit4ClassRunner.class)
@@ -82,10 +86,11 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/importerServiceTest.xml"
 })
 @JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
+@DirtiesContext
 public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDataProviderAware {
 
     @Autowired
-    private NodeDao m_nodeDao;
+    private MockNodeDao m_nodeDao;
 
     @Autowired
     private Provisioner m_provisioner;
@@ -99,16 +104,19 @@ public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDa
     @Autowired
     private SnmpPeerFactory m_snmpPeerFactory;
 
-	private MockSnmpDataProvider m_mockSnmpDataProvider;
+    @Autowired
+    private DatabasePopulator m_populator;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
+    private MockSnmpDataProvider m_mockSnmpDataProvider;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         BeanUtils.assertAutowiring(this);
 
-		// Override the SnmpPeerFactory with an instance that directs all requests to the temporary JUnit SNMP agent
+        // Override the SnmpPeerFactory with an instance that directs all requests to the temporary JUnit SNMP agent
         SnmpPeerFactory.setInstance(m_snmpPeerFactory);
         assertTrue(m_snmpPeerFactory instanceof ProxySnmpAgentConfigFactory);
-	}
+    }
 
     @BeforeClass
     public static void setUpSnmpConfig() {
@@ -122,17 +130,25 @@ public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDa
 
     @Before
     public void setUp() throws Exception {
-    	final ForeignSource fs = new ForeignSource();
-    	fs.setName("default");
-    	fs.addDetector(new PluginConfig("SNMP", "org.opennms.netmgt.provision.detector.snmp.SnmpDetector"));
-    	final MockForeignSourceRepository mfsr = new MockForeignSourceRepository();
-    	mfsr.putDefaultForeignSource(fs);
-    	m_provisioner.getProvisionService().setForeignSourceRepository(mfsr);
+        final ForeignSource fs = new ForeignSource();
+        fs.setName("default");
+        fs.addDetector(new PluginConfig("SNMP", "org.opennms.netmgt.provision.detector.snmp.SnmpDetector"));
+        final MockForeignSourceRepository mfsr = new MockForeignSourceRepository();
+        mfsr.putDefaultForeignSource(fs);
+        m_provisioner.getProvisionService().setForeignSourceRepository(mfsr);
+        m_provisioner.setScheduledExecutor(Executors.newSingleThreadScheduledExecutor());
         m_provisioner.start();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        m_eventSubscriber.getEventAnticipator().reset();
+        m_populator.resetDatabase();
+        m_provisioner.waitFor();
+    }
+
     public void runScan(final NodeScan scan) throws InterruptedException, ExecutionException {
-    	final Task t = scan.createTask();
+        final Task t = scan.createTask();
         t.schedule();
         t.waitFor();
     }
@@ -142,36 +158,53 @@ public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDa
         @JUnitSnmpAgent(host="192.168.255.22", port=161, resource="classpath:/dw/walks/node1-walk.properties")
     })
     public void testInitialSetup() throws Exception {
-        final InetAddress addr = InetAddressUtils.addr("192.168.255.22");
+        final int nextNodeId = m_nodeDao.getNextNodeId();
+        final InetAddress iface = InetAddressUtils.addr("192.168.255.22");
+
         final EventAnticipator anticipator = m_eventSubscriber.getEventAnticipator();
-        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_ADDED_EVENT_UEI, "Provisiond").setNodeid(1).getEvent());
-        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(1).setInterface(InetAddressUtils.addr("192.168.255.22")).getEvent());
-        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond").setNodeid(1).setInterface(InetAddressUtils.addr("192.168.255.22")).setService("SNMP").getEvent());
-        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond").setNodeid(1).setInterface(InetAddressUtils.addr("192.168.255.22")).setService("ICMP").getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_ADDED_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).setService("SNMP").getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).setService("ICMP").getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.REINITIALIZE_PRIMARY_SNMP_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.PROVISION_SCAN_COMPLETE_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
 
         importResource("classpath:/dw/import/dw_test_import.xml");
 
         anticipator.verifyAnticipated(200000, 0, 0, 0, 0);
 
         final OnmsNode onmsNode = m_nodeDao.findByForeignId("dw", "arthur");
-        
+
         final String sysObjectId = onmsNode.getSysObjectId();
         assertEquals(".1.3.6.1.4.1.7262.2.3", sysObjectId);
 
-		m_mockSnmpDataProvider.setDataForAddress(new SnmpAgentAddress(addr, 161), m_resourceLoader.getResource("classpath:/dw/walks/node3-walk.properties"));
-        assertEquals(".1.3.6.1.4.1.7262.1", SnmpUtils.get(m_snmpPeerFactory.getAgentConfig(addr), SnmpObjId.get(".1.3.6.1.2.1.1.2.0")).toDisplayString());
-        
+        m_mockSnmpDataProvider.setDataForAddress(new SnmpAgentAddress(iface, 161), m_resourceLoader.getResource("classpath:/dw/walks/node3-walk.properties"));
+        assertEquals(".1.3.6.1.4.1.7262.1", SnmpUtils.get(m_snmpPeerFactory.getAgentConfig(iface), SnmpObjId.get(".1.3.6.1.2.1.1.2.0")).toDisplayString());
+
+        anticipator.reset();
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_UPDATED_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.REINITIALIZE_PRIMARY_SNMP_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.PROVISION_SCAN_COMPLETE_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
+
         importResource("classpath:/dw/import/dw_test_import.xml");
 
-        final NodeScan scan2 = m_provisioner.createNodeScan(onmsNode.getId(), onmsNode.getForeignSource(), onmsNode.getForeignId());
+        anticipator.verifyAnticipated(200000, 0, 0, 0, 0);
+
+        anticipator.reset();
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.REINITIALIZE_PRIMARY_SNMP_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.PROVISION_SCAN_COMPLETE_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
+
+        final NodeScan scan2 = m_provisioner.createNodeScan(nextNodeId, onmsNode.getForeignSource(), onmsNode.getForeignId());
         runScan(scan2);
 
         m_nodeDao.flush();
+        anticipator.verifyAnticipated(200000, 0, 0, 0, 0);
 
         final OnmsNode node = m_nodeDao.findByForeignId("dw", "arthur");
 
         final String sysObjectId2 = node.getSysObjectId();
         assertEquals(".1.3.6.1.4.1.7262.1", sysObjectId2);
+
     }
 
     @Test
@@ -179,21 +212,34 @@ public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDa
         @JUnitSnmpAgent(host="192.168.255.22", resource="classpath:/dw/walks/node3-walk.properties")
     })
     public void testASetup() throws Exception {
+        final int nextNodeId = m_nodeDao.getNextNodeId();
+        final InetAddress iface = InetAddressUtils.addr("192.168.255.22");
 
-    	importResource("classpath:/dw/import/dw_test_import.xml");
+        final EventAnticipator anticipator = m_eventSubscriber.getEventAnticipator();
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_ADDED_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).setService("SNMP").getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).setService("ICMP").getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.REINITIALIZE_PRIMARY_SNMP_INTERFACE_EVENT_UEI, "Provisiond").setNodeid(nextNodeId).setInterface(iface).getEvent());
+        anticipator.anticipateEvent(new EventBuilder(EventConstants.PROVISION_SCAN_COMPLETE_UEI, "Provisiond").setNodeid(nextNodeId).getEvent());
+
+        importResource("classpath:/dw/import/dw_test_import.xml");
+
+        anticipator.verifyAnticipated(200000, 0, 0, 0, 0);
 
         final OnmsNode onmsNode = m_nodeDao.findAll().get(0);
         String sysObjectId = onmsNode.getSysObjectId();
 
         assertEquals(".1.3.6.1.4.1.7262.1", sysObjectId);
+        
     }
 
     private void importResource(final String location) throws Exception {
         m_provisioner.importModelFromResource(m_resourceLoader.getResource(location), true);
     }
 
-	@Override
-	public void setMockSnmpDataProvider(final MockSnmpDataProvider provider) {
-		m_mockSnmpDataProvider = provider;
-	}
+    @Override
+    public void setMockSnmpDataProvider(final MockSnmpDataProvider provider) {
+        m_mockSnmpDataProvider = provider;
+    }
 }

@@ -34,8 +34,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,7 +101,7 @@ public class Spc391Test {
     private DatabasePopulator m_populator;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         MockLogAppender.setupLogging();
         final MockForeignSourceRepository mfsr = new MockForeignSourceRepository();
         final ForeignSource fs = new ForeignSource();
@@ -107,8 +109,15 @@ public class Spc391Test {
         fs.addDetector(new PluginConfig("ICMP", "org.opennms.netmgt.provision.service.MockServiceDetector"));
         fs.addDetector(new PluginConfig("SNMP", "org.opennms.netmgt.provision.detector.snmp.SnmpDetector"));
         mfsr.putDefaultForeignSource(fs);
+        m_provisioner.setScheduledExecutor(Executors.newSingleThreadScheduledExecutor());
         m_provisioner.getProvisionService().setForeignSourceRepository(mfsr);
+        m_provisioner.start();
+    }
+    
+    @After
+    public void tearDown() {
         m_populator.resetDatabase();
+        m_provisioner.waitFor();
     }
 
     @Test
