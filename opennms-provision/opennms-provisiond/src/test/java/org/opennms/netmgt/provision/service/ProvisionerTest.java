@@ -130,7 +130,7 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/mockForeignSourceContext.xml",
         "classpath:/importerServiceTest.xml"
 })
-@JUnitConfigurationEnvironment
+@JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
 @DirtiesContext
 public class ProvisionerTest implements InitializingBean, MockSnmpDataProviderAware {
     
