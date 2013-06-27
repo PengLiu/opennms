@@ -30,6 +30,7 @@ package org.opennms.netmgt.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.opennms.core.utils.InetAddressUtils.addr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,11 +43,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
-import org.opennms.core.test.db.TemporaryDatabase;
-import org.opennms.core.test.db.TemporaryDatabaseAware;
 import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.utils.BeanUtils;
-import org.opennms.netmgt.config.DatabaseSchemaConfigFactory;
 import org.opennms.netmgt.dao.api.DistPollerDao;
 import org.opennms.netmgt.dao.api.EventDao;
 import org.opennms.netmgt.dao.api.IpInterfaceDao;
@@ -54,8 +52,6 @@ import org.opennms.netmgt.dao.api.MonitoredServiceDao;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.api.OutageDao;
 import org.opennms.netmgt.dao.api.ServiceTypeDao;
-import org.opennms.netmgt.filter.FilterDaoFactory;
-import org.opennms.netmgt.filter.JdbcFilterDao;
 import org.opennms.netmgt.model.OnmsCriteria;
 import org.opennms.netmgt.model.OnmsDistPoller;
 import org.opennms.netmgt.model.OnmsEvent;
@@ -89,7 +85,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 })
 @JUnitConfigurationEnvironment
 @JUnitTemporaryDatabase
-public class OutageDaoTest implements InitializingBean, TemporaryDatabaseAware<TemporaryDatabase> {
+public class OutageDaoTest implements InitializingBean {
     @Autowired
     private DistPollerDao m_distPollerDao;
     
@@ -114,13 +110,6 @@ public class OutageDaoTest implements InitializingBean, TemporaryDatabaseAware<T
     @Autowired
     TransactionTemplate m_transTemplate;
 
-    private TemporaryDatabase m_database;
-
-    @Override
-    public void setTemporaryDatabase(TemporaryDatabase database) {
-        m_database = database;
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         BeanUtils.assertAutowiring(this);
@@ -130,18 +119,6 @@ public class OutageDaoTest implements InitializingBean, TemporaryDatabaseAware<T
     public void setUp() throws Exception {
         OnmsServiceType t = new OnmsServiceType("ICMP");
         m_serviceTypeDao.save(t);
-
-        // Initialize Filter DAO
-        // Give the filter DAO access to the same TemporaryDatabase data source
-        // as the autowired DAOs
-
-        System.setProperty("opennms.home", "src/test/resources");
-        DatabaseSchemaConfigFactory.init();
-        JdbcFilterDao jdbcFilterDao = new JdbcFilterDao();
-        jdbcFilterDao.setDataSource(m_database);
-        jdbcFilterDao.setDatabaseSchemaConfigFactory(DatabaseSchemaConfigFactory.getInstance());
-        jdbcFilterDao.afterPropertiesSet();
-        FilterDaoFactory.setInstance(jdbcFilterDao);
     }
 
     @Test
@@ -151,7 +128,7 @@ public class OutageDaoTest implements InitializingBean, TemporaryDatabaseAware<T
         node.setLabel("localhost");
         m_nodeDao.save(node);
 
-        OnmsIpInterface ipInterface = new OnmsIpInterface("172.16.1.1", node);
+        OnmsIpInterface ipInterface = new OnmsIpInterface(addr("172.16.1.1"), node);
 
         OnmsServiceType serviceType = m_serviceTypeDao.findByName("ICMP");
         assertNotNull(serviceType);
@@ -369,7 +346,7 @@ public class OutageDaoTest implements InitializingBean, TemporaryDatabaseAware<T
     private OnmsIpInterface getIpInterface(String ipAddr, OnmsNode node) {
         OnmsIpInterface ipInterface = m_ipInterfaceDao.findByNodeIdAndIpAddress(node.getId(), ipAddr);
         if (ipInterface == null) {
-            ipInterface = new OnmsIpInterface(ipAddr, node);
+            ipInterface = new OnmsIpInterface(addr(ipAddr), node);
             m_ipInterfaceDao.save(ipInterface);
         }
         return ipInterface;

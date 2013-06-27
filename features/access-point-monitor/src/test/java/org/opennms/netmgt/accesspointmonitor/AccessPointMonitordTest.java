@@ -41,13 +41,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
-import org.opennms.core.test.db.TemporaryDatabase;
-import org.opennms.core.test.db.TemporaryDatabaseAware;
 import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.utils.ConfigFileConstants;
 import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.EventConstants;
-import org.opennms.netmgt.config.DatabaseSchemaConfigFactory;
 import org.opennms.netmgt.config.accesspointmonitor.AccessPointMonitorConfigFactory;
 import org.opennms.netmgt.dao.AccessPointDao;
 import org.opennms.netmgt.dao.api.IpInterfaceDao;
@@ -55,8 +52,6 @@ import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.api.ServiceTypeDao;
 import org.opennms.netmgt.dao.mock.EventAnticipator;
 import org.opennms.netmgt.dao.mock.MockEventIpcManager;
-import org.opennms.netmgt.filter.FilterDaoFactory;
-import org.opennms.netmgt.filter.JdbcFilterDao;
 import org.opennms.netmgt.model.AccessPointStatus;
 import org.opennms.netmgt.model.NetworkBuilder;
 import org.opennms.netmgt.model.OnmsAccessPoint;
@@ -81,8 +76,8 @@ import org.springframework.transaction.PlatformTransactionManager;
     "classpath:META-INF/opennms/smallEventConfDao.xml"
 })
 @JUnitConfigurationEnvironment
-@JUnitTemporaryDatabase()
-public class AccessPointMonitordTest implements InitializingBean, TemporaryDatabaseAware<TemporaryDatabase> {
+@JUnitTemporaryDatabase
+public class AccessPointMonitordTest implements InitializingBean {
 
     @Autowired
     private PlatformTransactionManager m_transactionManager;
@@ -107,17 +102,11 @@ public class AccessPointMonitordTest implements InitializingBean, TemporaryDatab
 
     private MockEventIpcManager m_eventMgr;
     private EventAnticipator m_anticipator;
-    private TemporaryDatabase m_database;
 
     private final static String AP1_MAC = "00:01:02:03:04:05";
     private final static String AP2_MAC = "07:08:09:0A:0B:0C";
     private final static String AP3_MAC = "F0:05:BA:11:00:FF";
     private final static int PACKAGE_SCAN_INTERVAL = 1000;
-
-    @Override
-    public void setTemporaryDatabase(TemporaryDatabase database) {
-        m_database = database;
-    }
 
     @Override
     public void afterPropertiesSet() {
@@ -130,15 +119,6 @@ public class AccessPointMonitordTest implements InitializingBean, TemporaryDatab
 
     @Before
     public void setUp() throws Exception {
-        // Initialise the JdbcFilterDao so that it will connect to the correct
-        // database
-        DatabaseSchemaConfigFactory.init();
-        JdbcFilterDao jdbcFilterDao = new JdbcFilterDao();
-        jdbcFilterDao.setDataSource(m_database);
-        jdbcFilterDao.setDatabaseSchemaConfigFactory(DatabaseSchemaConfigFactory.getInstance());
-        jdbcFilterDao.afterPropertiesSet();
-        FilterDaoFactory.setInstance(jdbcFilterDao);
-
         // Create our event manager and anticipator
         m_anticipator = new EventAnticipator();
 
