@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model-import date-stamp="2005-12-27T09:12:54" foreign-source="muppetworkshop" last-import="2013-06-27T12:41:47.944-05:00" xmlns="http://xmlns.opennms.org/xsd/config/model-import">
+    <node foreign-id="bert" node-label="bert">
+        <interface descr="" ip-addr="10.0.0.1" status="1" snmp-primary="N">
+            <monitored-service service-name="ICMP"/>
+        </interface>
+        <asset name="description" value="yellow human"/>
+        <asset name="pollercategory" value="platinum"/>
+    </node>
+</model-import>

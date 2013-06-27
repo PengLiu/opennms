@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.model.OnmsCategory;
@@ -218,6 +219,7 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
         if (node == null) return ifaces;
         
         for (final OnmsIpInterface iface : node.getIpInterfaces()) {
+            if (iface.isPrimary()) continue;
             if (iface.getIpLastCapsdPoll() == null
                     || iface.getIpLastCapsdPoll().before(scanStamp)) ifaces.add(iface);
         }
@@ -231,6 +233,7 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
         if (node == null) return;
 
         for (final OnmsIpInterface iface : findObsoleteIpInterfaces(nodeId, scanStamp)) {
+            LogUtils.debugf(this, "Deleting obsolete IP interface: %s", iface);
             node.getIpInterfaces().remove(iface);
             getIpInterfaceDao().delete(iface.getId());
         }
@@ -238,6 +241,7 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
         for (final OnmsSnmpInterface iface : snmpInterfaces) {
             if (iface.getLastCapsdPoll() == null
                     || iface.getLastCapsdPoll().before(scanStamp)) {
+                LogUtils.debugf(this, "Deleting obsolete SNMP interface: %s", iface);
                 snmpInterfaces.remove(iface);
                 getSnmpInterfaceDao().delete(iface.getId());
             }

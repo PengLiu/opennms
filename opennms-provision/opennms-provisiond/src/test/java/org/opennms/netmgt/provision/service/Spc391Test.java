@@ -42,7 +42,6 @@ import org.junit.runner.RunWith;
 import org.opennms.core.tasks.Task;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
-import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.test.snmp.annotations.JUnitSnmpAgent;
 import org.opennms.core.test.snmp.annotations.JUnitSnmpAgents;
 import org.opennms.netmgt.EventConstants;
@@ -64,37 +63,37 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
-        "classpath:/META-INF/opennms/applicationContext-dao.xml",
-        "classpath:/META-INF/opennms/applicationContext-daemon.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockEventd.xml",
         "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
         "classpath:/META-INF/opennms/mockEventIpcManager.xml",
         "classpath:/META-INF/opennms/applicationContext-provisiond.xml",
-        "classpath*:/META-INF/opennms/component-dao.xml",
+        "classpath*:/META-INF/opennms/provisiond-extensions.xml",
         "classpath*:/META-INF/opennms/detectors.xml",
+        "classpath:/mockForeignSourceContext.xml",
         "classpath:/importerServiceTest.xml"
 })
-@JUnitConfigurationEnvironment
-@JUnitTemporaryDatabase
+@JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
 public class Spc391Test {
-    
+
     @Autowired
     private Provisioner m_provisioner;
-    
+
     @Autowired
     private ResourceLoader m_resourceLoader;
-    
+
     @Autowired
     private SnmpInterfaceDao m_snmpInterfaceDao;
-    
+
     @Autowired
     private IpInterfaceDao m_ipInterfaceDao;
-    
+
     @Autowired
     private NodeDao m_nodeDao;
 
     @Autowired
     private MockEventIpcManager m_eventSubscriber;
-    
+
     @Before
     public void setUp() {
         MockLogAppender.setupLogging();
@@ -119,7 +118,7 @@ public class Spc391Test {
         System.err.println("triggering import");
         m_provisioner.importModelFromResource(m_resourceLoader.getResource("classpath:/SPC-391.xml"), true);
         System.err.println("finished triggering imports");
-        
+
         eventReceived.await(5, TimeUnit.MINUTES);
 
         final List<OnmsNode> nodes = getNodeDao().findAll();
@@ -127,11 +126,11 @@ public class Spc391Test {
     }
 
     public void runScan(final NodeScan scan) throws InterruptedException, ExecutionException {
-    	final Task t = scan.createTask();
+        final Task t = scan.createTask();
         t.schedule();
         t.waitFor();
     }
-    
+
     private CountDownLatch anticipateEvents(final int numberToMatch, final String... ueis) {
         final CountDownLatch eventReceived = new CountDownLatch(numberToMatch);
         m_eventSubscriber.addEventListener(new EventListener() {
@@ -151,13 +150,5 @@ public class Spc391Test {
 
     private NodeDao getNodeDao() {
         return m_nodeDao;
-    }
-
-    private IpInterfaceDao getInterfaceDao() {
-        return m_ipInterfaceDao;
-    }
-    
-    private SnmpInterfaceDao getSnmpInterfaceDao() {
-        return m_snmpInterfaceDao;
     }
 }

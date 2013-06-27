@@ -42,7 +42,6 @@ import org.junit.runner.RunWith;
 import org.opennms.core.tasks.Task;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
-import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.test.snmp.MockSnmpDataProvider;
 import org.opennms.core.test.snmp.MockSnmpDataProviderAware;
 import org.opennms.core.test.snmp.ProxySnmpAgentConfigFactory;
@@ -71,18 +70,18 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-        "classpath:/META-INF/opennms/applicationContext-soa.xml", 
-        "classpath:/META-INF/opennms/applicationContext-dao.xml", 
-        "classpath:/META-INF/opennms/applicationContext-daemon.xml", 
-        "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml", 
-        "classpath:/META-INF/opennms/mockEventIpcManager.xml", 
-        "classpath:/META-INF/opennms/applicationContext-provisiond.xml", 
-        "classpath*:/META-INF/opennms/component-dao.xml", 
-        "classpath*:/META-INF/opennms/detectors.xml", 
-        "classpath:/importerServiceTest.xml" 
+        "classpath:/META-INF/opennms/applicationContext-soa.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockEventd.xml",
+        "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
+        "classpath:/META-INF/opennms/mockEventIpcManager.xml",
+        "classpath:/META-INF/opennms/applicationContext-provisiond.xml",
+        "classpath*:/META-INF/opennms/provisiond-extensions.xml",
+        "classpath*:/META-INF/opennms/detectors.xml",
+        "classpath:/mockForeignSourceContext.xml",
+        "classpath:/importerServiceTest.xml"
 })
-@JUnitConfigurationEnvironment
-@JUnitTemporaryDatabase
+@JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
 public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDataProviderAware {
 
     @Autowired
@@ -142,7 +141,6 @@ public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDa
     @JUnitSnmpAgents({
         @JUnitSnmpAgent(host="192.168.255.22", port=161, resource="classpath:/dw/walks/node1-walk.properties")
     })
-    @JUnitTemporaryDatabase
     public void testInitialSetup() throws Exception {
         final InetAddress addr = InetAddressUtils.addr("192.168.255.22");
         final EventAnticipator anticipator = m_eventSubscriber.getEventAnticipator();
@@ -180,7 +178,6 @@ public class DragonWaveNodeSwitchingTest implements InitializingBean, MockSnmpDa
     @JUnitSnmpAgents({
         @JUnitSnmpAgent(host="192.168.255.22", resource="classpath:/dw/walks/node3-walk.properties")
     })
-    @JUnitTemporaryDatabase
     public void testASetup() throws Exception {
 
     	importResource("classpath:/dw/import/dw_test_import.xml");

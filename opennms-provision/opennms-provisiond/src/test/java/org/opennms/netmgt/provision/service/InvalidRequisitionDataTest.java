@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
-import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.EventConstants;
@@ -61,21 +60,17 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
-        "classpath:/META-INF/opennms/applicationContext-dao.xml",
-        "classpath:/META-INF/opennms/applicationContext-daemon.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockEventd.xml",
         "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
         "classpath:/META-INF/opennms/mockEventIpcManager.xml",
-        "classpath:/META-INF/opennms/applicationContext-setupIpLike-enabled.xml",
         "classpath:/META-INF/opennms/applicationContext-provisiond.xml",
-        "classpath*:/META-INF/opennms/component-dao.xml",
         "classpath*:/META-INF/opennms/provisiond-extensions.xml",
         "classpath*:/META-INF/opennms/detectors.xml",
-        "classpath:/META-INF/opennms/applicationContext-databasePopulator.xml",
+        "classpath*:/META-INF/opennms/component-dao.xml",
         "classpath:/importerServiceTest.xml"
 })
-/* This test is for bug 3778 */
-@JUnitTemporaryDatabase
-@JUnitConfigurationEnvironment
+@JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
 @DirtiesContext
 public class InvalidRequisitionDataTest implements InitializingBean {
     
@@ -126,7 +121,6 @@ public class InvalidRequisitionDataTest implements InitializingBean {
     }
     
     @Test
-    @JUnitTemporaryDatabase
     public void testImportInvalidAsset() throws Exception {
         assertEquals(0, m_nodeDao.countAll());
 
@@ -153,7 +147,6 @@ public class InvalidRequisitionDataTest implements InitializingBean {
      * @see http://issues.opennms.org/browse/NMS-5191
      */
     @Test
-    @JUnitTemporaryDatabase
     public void testImportLegacyAssetNameRequisition() throws Exception {
         assertEquals(0, m_nodeDao.countAll());
 
@@ -178,7 +171,6 @@ public class InvalidRequisitionDataTest implements InitializingBean {
     }
 
     @Test
-    @JUnitTemporaryDatabase
     public void testImportInvalidXml() throws Exception {
         assertEquals(0, m_nodeDao.countAll());
 
