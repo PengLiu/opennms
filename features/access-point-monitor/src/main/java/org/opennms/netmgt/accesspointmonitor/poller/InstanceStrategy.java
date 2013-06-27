@@ -132,7 +132,7 @@ public class InstanceStrategy implements AccessPointPoller {
                 if (isUp) {
                     String physAddr = getPhysAddrFromInstance(instance);
                     log().debug("AP at instance '" + instance + "' with MAC '" + physAddr + "' is considered to be ONLINE on controller '" + m_iface.getIpAddress() + "'");
-                    OnmsAccessPoint ap = m_accessPointDao.findByPhysAddr(physAddr);
+                    OnmsAccessPoint ap = m_accessPointDao.get(physAddr);
                     if (ap != null) {
                         if (ap.getPollingPackage().compareToIgnoreCase(getPackage().getName()) == 0) {
                             // Save the controller's IP address
