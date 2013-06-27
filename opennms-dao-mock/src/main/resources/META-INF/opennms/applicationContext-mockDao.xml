@@ -11,6 +11,11 @@
         http://xmlns.opennms.org/xsd/spring/onms-osgi http://xmlns.opennms.org/xsd/spring/onms-osgi.xsd
     ">
 
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+        <property name="location" value="file:${opennms.home}/etc/model-importer.properties" />
+    </bean>
+
     <bean id="transactionManager" class="org.opennms.netmgt.dao.mock.MockTransactionManager" />
     <onmsgi:service interface="org.springframework.transaction.PlatformTransactionManager" ref="transactionManager" />
 

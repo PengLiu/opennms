@@ -45,6 +45,7 @@ import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.test.snmp.annotations.JUnitSnmpAgent;
 import org.opennms.core.test.snmp.annotations.JUnitSnmpAgents;
 import org.opennms.netmgt.EventConstants;
+import org.opennms.netmgt.dao.DatabasePopulator;
 import org.opennms.netmgt.dao.api.IpInterfaceDao;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
@@ -94,6 +95,9 @@ public class Spc391Test {
     @Autowired
     private MockEventIpcManager m_eventSubscriber;
 
+    @Autowired
+    private DatabasePopulator m_populator;
+
     @Before
     public void setUp() {
         MockLogAppender.setupLogging();
@@ -104,6 +108,7 @@ public class Spc391Test {
         fs.addDetector(new PluginConfig("SNMP", "org.opennms.netmgt.provision.detector.snmp.SnmpDetector"));
         mfsr.putDefaultForeignSource(fs);
         m_provisioner.getProvisionService().setForeignSourceRepository(mfsr);
+        m_populator.resetDatabase();
     }
 
     @Test
@@ -121,7 +126,7 @@ public class Spc391Test {
 
         eventReceived.await(5, TimeUnit.MINUTES);
 
-        final List<OnmsNode> nodes = getNodeDao().findAll();
+        final List<OnmsNode> nodes = m_nodeDao.findAll();
         assertEquals(1, nodes.size());
     }
 
@@ -146,9 +151,5 @@ public class Spc391Test {
             }
         }, Arrays.asList(ueis));
         return eventReceived;
-    }
-
-    private NodeDao getNodeDao() {
-        return m_nodeDao;
     }
 }

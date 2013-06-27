@@ -40,10 +40,11 @@ import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.EventConstants;
+import org.opennms.netmgt.dao.DatabasePopulator;
 import org.opennms.netmgt.dao.api.EventDao;
-import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.mock.EventAnticipator;
 import org.opennms.netmgt.dao.mock.MockEventIpcManager;
+import org.opennms.netmgt.dao.mock.MockNodeDao;
 import org.opennms.netmgt.model.OnmsEvent;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.events.EventBuilder;
@@ -75,7 +76,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class InvalidRequisitionDataTest implements InitializingBean {
     
     @Autowired
-    private NodeDao m_nodeDao;
+    private MockNodeDao m_nodeDao;
 
     @Autowired
     private EventDao m_eventDao;
@@ -89,6 +90,9 @@ public class InvalidRequisitionDataTest implements InitializingBean {
     @Autowired
     @Qualifier("mock")
     private MockEventIpcManager m_eventManager;
+
+    @Autowired
+    private DatabasePopulator m_populator;
 
     private EventAnticipator m_anticipator;
 
@@ -118,19 +122,21 @@ public class InvalidRequisitionDataTest implements InitializingBean {
     @After
     public void tearDown() throws Exception {
         m_anticipator.verifyAnticipated();
+        m_populator.resetDatabase();
     }
     
     @Test
     public void testImportInvalidAsset() throws Exception {
+        final int nextNodeId = m_nodeDao.getNextNodeId();
         assertEquals(0, m_nodeDao.countAll());
 
         final Resource invalidAssetFieldResource = getResource("classpath:/import_invalidAssetFieldName.xml");
 
         m_anticipator.anticipateEvent(getStarted(invalidAssetFieldResource));
         m_anticipator.anticipateEvent(getSuccessful(invalidAssetFieldResource));
-        m_anticipator.anticipateEvent(getNodeAdded());
-        m_anticipator.anticipateEvent(getNodeGainedInterface());
-        m_anticipator.anticipateEvent(getNodeGainedService());
+        m_anticipator.anticipateEvent(getNodeAdded(nextNodeId));
+        m_anticipator.anticipateEvent(getNodeGainedInterface(nextNodeId));
+        m_anticipator.anticipateEvent(getNodeGainedService(nextNodeId));
 
         // This requisition has an asset on some nodes called "pollercategory".
         // Change it to "pollerCategory" (capital 'C') and the test passes...
@@ -148,15 +154,17 @@ public class InvalidRequisitionDataTest implements InitializingBean {
      */
     @Test
     public void testImportLegacyAssetNameRequisition() throws Exception {
+        final int nextNodeId = m_nodeDao.getNextNodeId();
+
         assertEquals(0, m_nodeDao.countAll());
 
         final Resource resource = getResource("classpath:/import_legacyAssetFieldName.xml");
 
         m_anticipator.anticipateEvent(getStarted(resource));
         m_anticipator.anticipateEvent(getSuccessful(resource));
-        m_anticipator.anticipateEvent(getNodeAdded());
-        m_anticipator.anticipateEvent(getNodeGainedInterface());
-        m_anticipator.anticipateEvent(getNodeGainedService());
+        m_anticipator.anticipateEvent(getNodeAdded(nextNodeId));
+        m_anticipator.anticipateEvent(getNodeGainedInterface(nextNodeId));
+        m_anticipator.anticipateEvent(getNodeGainedService(nextNodeId));
 
         // This requisition has an asset called "maintContractNumber" which was changed in
         // OpenNMS 1.10. We want to preserve backwards compatibility so make sure that the
@@ -205,19 +213,19 @@ public class InvalidRequisitionDataTest implements InitializingBean {
         .getEvent();
     }
     
-    private Event getNodeAdded() {
+    private Event getNodeAdded(final int nodeId) {
         return new EventBuilder( EventConstants.NODE_ADDED_EVENT_UEI, "Provisiond" )
-        .setNodeid(1).getEvent();
+        .setNodeid(nodeId).getEvent();
     }
 
-    private Event getNodeGainedInterface() {
+    private Event getNodeGainedInterface(final int nodeId) {
         return new EventBuilder( EventConstants.NODE_GAINED_INTERFACE_EVENT_UEI, "Provisiond" )
-        .setNodeid(1).setInterface(InetAddressUtils.addr("10.0.0.1")).getEvent();
+        .setNodeid(nodeId).setInterface(InetAddressUtils.addr("10.0.0.1")).getEvent();
     }
 
-    private Event getNodeGainedService() {
+    private Event getNodeGainedService(final int nodeId) {
         return new EventBuilder( EventConstants.NODE_GAINED_SERVICE_EVENT_UEI, "Provisiond" )
-        .setNodeid(1).setInterface(InetAddressUtils.addr("10.0.0.1")).setService("ICMP").getEvent();
+        .setNodeid(nodeId).setInterface(InetAddressUtils.addr("10.0.0.1")).setService("ICMP").getEvent();
     }
 
     protected Resource getResource(final String location) {
