@@ -78,7 +78,7 @@ public final class Eventd extends AbstractServiceDaemon {
     /**
      * The log4j category used to log debug messsages and statements.
      */
-    public static final String LOG4J_CATEGORY = "OpenNMS.Eventd";
+    public static final String LOG4J_CATEGORY = "eventd";
 
     /**
      * Reference to the event processor
@@ -100,7 +100,7 @@ public final class Eventd extends AbstractServiceDaemon {
      * eventd originates events during correlation) and the broadcast queue
      */
     public Eventd() {
-        super("OpenNMS.Eventd");
+        super("eventd");
     }
 
     /**
