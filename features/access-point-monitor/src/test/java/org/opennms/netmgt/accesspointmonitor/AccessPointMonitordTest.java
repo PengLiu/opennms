@@ -214,7 +214,7 @@ public class AccessPointMonitordTest implements InitializingBean {
         assertEquals(2, m_apm.getActivePackageNames().size());
 
         // Change the package name for AP1 - the package should be unscheduled
-        OnmsAccessPoint ap1 = m_accessPointDao.findByPhysAddr(AP1_MAC);
+        OnmsAccessPoint ap1 = m_accessPointDao.get(AP1_MAC);
         ap1.setPollingPackage("default");
         m_accessPointDao.update(ap1);
         m_accessPointDao.flush();
