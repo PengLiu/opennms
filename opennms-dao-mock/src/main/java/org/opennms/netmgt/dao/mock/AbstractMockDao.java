@@ -160,7 +160,7 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
         }
         LOG.debug("save({})", entity);
         if (m_entries.containsKey(id)) {
-            LOG.warn("save({}): id exists: {}", entity, id);
+            LOG.debug("save({}): id exists: {}", entity, id);
         }
         m_entries.put(id, entity);
     }

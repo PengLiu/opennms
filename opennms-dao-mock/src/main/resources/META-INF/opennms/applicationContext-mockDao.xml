@@ -59,6 +59,9 @@
     <bean id="ipInterfaceDao" class="org.opennms.netmgt.dao.mock.MockIpInterfaceDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.IpInterfaceDao" ref="ipInterfaceDao" />
 
+    <bean id="ipRouteInterfaceDao" class="org.opennms.netmgt.dao.mock.MockIpRouteInterfaceDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.IpRouteInterfaceDao" ref="ipRouteInterfaceDao" />
+
     <bean id="locationMonitorDao" class="org.opennms.netmgt.dao.mock.MockLocationMonitorDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.LocationMonitorDao" ref="locationMonitorDao" />
 
@@ -86,6 +89,12 @@
     <bean id="snmpInterfaceDao" class="org.opennms.netmgt.dao.mock.MockSnmpInterfaceDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.SnmpInterfaceDao" ref="snmpInterfaceDao" />
 
+    <bean id="stpInterfaceDao" class="org.opennms.netmgt.dao.mock.MockStpInterfaceDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.StpInterfaceDao" ref="stpInterfaceDao" />
+
+    <bean id="stpNodeDao" class="org.opennms.netmgt.dao.mock.MockStpNodeDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.StpNodeDao" ref="stpNodeDao" />
+
     <bean id="init-snmpPeerFactory" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="staticMethod"><value>org.opennms.netmgt.config.SnmpPeerFactory.init</value></property>
     </bean>
@@ -105,6 +114,9 @@
 
     <bean id="nodeDao" class="org.opennms.netmgt.dao.mock.MockNodeDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.NodeDao" ref="nodeDao" />
+
+    <bean id="vlanDao" class="org.opennms.netmgt.dao.mock.MockVlanDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.VlanDao" ref="vlanDao" />
 
     <!-- 
     <bean id="resourceDao" class="org.opennms.netmgt.dao.support.DefaultResourceDao">
