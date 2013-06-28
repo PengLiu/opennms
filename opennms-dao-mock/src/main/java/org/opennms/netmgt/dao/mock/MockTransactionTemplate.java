@@ -40,6 +40,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class MockTransactionTemplate extends TransactionTemplate {
     private static final long serialVersionUID = 2605665424557979322L;
 
+    @Override
+    public void afterPropertiesSet() {
+        if (getTransactionManager() == null) {
+            setTransactionManager(new MockTransactionManager());
+        }
+    }
+
     public <T> T execute(final TransactionCallback<T> action) throws TransactionException {
         final TransactionStatus status = getTransactionManager().getTransaction(this);
         final T result = action.doInTransaction(status);

@@ -180,10 +180,13 @@ public class CollectdIntegrationTest extends TestCase {
         EasyMock.expect(m_ifaceDao.load(2)).andReturn(ifaceBlder.getInterface()).anyTimes();
         
         m_mockUtils.replayAll();
-        
+
+        final MockTransactionTemplate transTemplate = new MockTransactionTemplate();
+        transTemplate.afterPropertiesSet();
+
         m_collectd.setCollectorConfigDao(m_collectorConfigDao);
         m_collectd.setEventIpcManager(m_eventIpcManager);
-        m_collectd.setTransactionTemplate(new MockTransactionTemplate());
+        m_collectd.setTransactionTemplate(transTemplate);
         m_collectd.setIpInterfaceDao(m_ifaceDao);
         m_collectd.setNodeDao(m_nodeDao);
         
