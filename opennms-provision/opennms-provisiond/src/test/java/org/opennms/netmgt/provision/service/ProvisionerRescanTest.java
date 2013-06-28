@@ -47,7 +47,8 @@ import org.opennms.core.test.snmp.annotations.JUnitSnmpAgent;
 import org.opennms.core.test.snmp.annotations.JUnitSnmpAgents;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.core.utils.InetAddressUtils;
-import org.opennms.core.utils.LogUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.opennms.netmgt.EventConstants;
 import org.opennms.netmgt.config.SnmpPeerFactory;
 import org.opennms.netmgt.dao.api.NodeDao;
@@ -89,6 +90,7 @@ import org.springframework.transaction.annotation.Transactional;
 @JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
 @DirtiesContext
 public class ProvisionerRescanTest implements InitializingBean {
+    private static final Logger LOG = LoggerFactory.getLogger(ProvisionerRescanTest.class);
 
     @Autowired
     private MockEventIpcManager m_mockEventIpcManager;
@@ -213,9 +215,9 @@ public class ProvisionerRescanTest implements InitializingBean {
         assertEquals(2, getNodeDao().countAll());
 
         for (final OnmsNode n : getNodeDao().findAll()) {
-        	LogUtils.infof(this, "found node %s", n);
+        	LOG.info("found node {}", n);
         	for (final OnmsIpInterface iface : n.getIpInterfaces()) {
-        		LogUtils.infof(this, "  interface: %s", iface);
+        		LOG.info("  interface: {}", iface);
         	}
         }
         

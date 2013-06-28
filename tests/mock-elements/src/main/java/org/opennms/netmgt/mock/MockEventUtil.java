@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opennms.core.utils.ThreadCategory;
+
 import org.opennms.netmgt.EventConstants;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsSeverity;
@@ -48,6 +48,8 @@ import org.opennms.netmgt.xml.event.AlarmData;
 import org.opennms.netmgt.xml.event.Event;
 import org.opennms.netmgt.xml.event.Parm;
 import org.opennms.test.mock.MockUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Abstract MockEventUtil class.</p>
@@ -59,6 +61,8 @@ import org.opennms.test.mock.MockUtil;
  * @version $Id: $
  */
 public abstract class MockEventUtil {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(MockEventUtil.class);
     /**
      * <p>createNodeLostServiceEvent</p>
      *
@@ -564,7 +568,7 @@ public abstract class MockEventUtil {
             Date date = EventConstants.parseToDate(eventTime);
             timestamp = new Timestamp(date.getTime());
         } catch (ParseException e) {
-            ThreadCategory.getInstance(MockEventUtil.class).warn("Failed to convert event time " + eventTime + " to timestamp.", e);
+        	LOG.warn("Failed to convert event time {} to timestamp.", eventTime, e);
     
             timestamp = new Timestamp((new Date()).getTime());
         }
@@ -652,7 +656,7 @@ public abstract class MockEventUtil {
         if (prefix == null) {
             prefix = "Event";
         }
-        ThreadCategory.getInstance(MockEventUtil.class).info(prefix + ": " + event.getUei() + "/" + event.getNodeid() + "/" + event.getInterface() + "/" + event.getService());
+        LOG.info("{}: {}/{}/{}/{}", prefix, event.getUei(), event.getNodeid(), event.getInterface(), event.getService());
     }
 
     /**

@@ -10,7 +10,6 @@ import java.util.Map;
 import org.opennms.core.criteria.Criteria;
 import org.opennms.core.criteria.restrictions.Restriction;
 import org.opennms.core.soa.ServiceRegistry;
-import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.dao.api.AssetRecordDao;
 import org.opennms.netmgt.dao.api.CategoryDao;
@@ -23,11 +22,15 @@ import org.opennms.netmgt.dao.api.OnmsDao;
 import org.opennms.netmgt.dao.api.ServiceTypeDao;
 import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.model.OnmsCriteria;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 public abstract class AbstractMockDao<T, K extends Serializable> implements OnmsDao<T, K>, InitializingBean {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractMockDao.class);
+
     @Autowired
     private ServiceRegistry m_serviceRegistry;
     private Map<K,T> m_entries = Collections.synchronizedMap(new HashMap<K,T>());
@@ -76,13 +79,13 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
 
     @Override
     public int countAll() {
-        LogUtils.debugf(this, "countAll()");
+        LOG.debug("countAll()");
         return findAll().size();
     }
 
     @Override
     public void delete(final T entity) {
-        LogUtils.debugf(this, "delete(%s)", entity);
+        LOG.debug("delete({})", entity);
         m_entries.remove(getId(entity));
     }
 
@@ -101,7 +104,7 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
     public List<T> findMatching(final Criteria criteria) {
         final List<T> matching = new ArrayList<T>();
         for (final T entity : findAll()) {
-            LogUtils.debugf(this, "findMatching(%s), entity = %s", criteria, entity);
+            LOG.debug("findMatching({}), entity = {}", criteria, entity);
             final BeanWrapperRestrictionVisitor<T> visitor = new BeanWrapperRestrictionVisitor<T>(entity);
             try {
                 for (final Restriction restriction : criteria.getRestrictions()) {
@@ -109,7 +112,7 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
                 }
                 matching.add(entity);
             } catch (final BeanWrapperRestrictionFailure e) {
-                LogUtils.debugf(this, "Failed to match to criteria %s: %s", criteria, e.getMessage());
+                LOG.debug("Failed to match to criteria {}: {}", criteria, e.getMessage());
             }
         }
         return matching;
@@ -117,33 +120,33 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
 
     @Override
     public List<T> findMatching(final OnmsCriteria criteria) {
-        LogUtils.debugf(this, "findMatching(%s)", criteria);
+        LOG.debug("findMatching({})", criteria);
         throw new UnsupportedOperationException("Not yet implemented!");
     }
 
     @Override
     public int countMatching(final Criteria onmsCrit) {
-        LogUtils.debugf(this, "countMatching(%s)", onmsCrit);
+        LOG.debug("countMatching({})", onmsCrit);
         final List<T> matched = findMatching(onmsCrit);
         return matched == null? 0 : matched.size();
     }
 
     @Override
     public int countMatching(final OnmsCriteria onmsCrit) {
-        LogUtils.debugf(this, "countMatching(%s)", onmsCrit);
+        LOG.debug("countMatching({})", onmsCrit);
         final List<T> matched = findMatching(onmsCrit);
         return matched == null? 0 : matched.size();
     }
 
     @Override
     public T get(final K id) {
-        LogUtils.debugf(this, "get(%s)", id);
+        LOG.debug("get({})", id);
         return m_entries.get(id);
     }
 
     @Override
     public T load(K id) {
-        LogUtils.debugf(this, "load(%s)", id);
+        LOG.debug("load({})", id);
         return m_entries.get(id);
     }
 
@@ -155,9 +158,9 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
             generateId(entity);
             id = getId(entity);
         }
-        LogUtils.debugf(this, "save(%s)", entity);
+        LOG.debug("save({})", entity);
         if (m_entries.containsKey(id)) {
-            LogUtils.warnf(this, "save(%s): id exists: %s", entity, id);
+            LOG.warn("save({}): id exists: {}", entity, id);
         }
         m_entries.put(id, entity);
     }
@@ -173,11 +176,11 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
 
     @Override
     public void update(final T entity) {
-        LogUtils.debugf(this, "update(%s)", entity);
+        LOG.debug("update({})", entity);
         final K id = getId(entity);
         final T existingEntity = get(id);
         if (!entity.equals(existingEntity)) {
-            LogUtils.warnf(this, "update(%s): updates do not match: %s", entity, id);
+            LOG.warn("update({}): updates do not match: {}", entity, id);
         }
         m_entries.put(id, entity);
     }

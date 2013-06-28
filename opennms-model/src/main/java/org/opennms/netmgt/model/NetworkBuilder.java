@@ -34,8 +34,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opennms.core.utils.InetAddressUtils;
-import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.model.OnmsArpInterface.StatusType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -44,6 +45,9 @@ import org.springframework.beans.PropertyAccessorFactory;
  * <p>NetworkBuilder class.</p>
  */
 public class NetworkBuilder {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(NetworkBuilder.class);
+
 
     private final OnmsDistPoller m_distPoller;
 
@@ -378,7 +382,7 @@ public class NetworkBuilder {
         try {
             m_assetBean.setPropertyValue(name, value);
         } catch (final BeansException e) {
-            LogUtils.warnf(this, e, "Could not set property '%s' on asset '%s'", value, name);
+            LOG.warn("Could not set property '{}' on asset '{}'", value, name, e);
         }
     }
 

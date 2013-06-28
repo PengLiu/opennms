@@ -31,7 +31,6 @@ package org.opennms.dashboard.server;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.opennms.core.utils.ThreadCategory;
 import org.opennms.dashboard.client.*;
 import org.opennms.netmgt.config.GroupDao;
 import org.opennms.netmgt.config.groups.Group;
@@ -52,6 +51,8 @@ import org.opennms.web.svclayer.SimpleWebTable;
 import org.opennms.web.svclayer.SimpleWebTable.Cell;
 import org.opennms.web.svclayer.support.RtcNodeModel;
 import org.opennms.web.svclayer.support.RtcNodeModel.RtcNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.security.core.context.SecurityContext;
@@ -73,6 +74,9 @@ import java.util.List;
  */
 @Transactional(readOnly = true)
 public class DefaultSurveillanceService implements SurveillanceService, InitializingBean {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultSurveillanceService.class);
+
 
     private NodeDao m_nodeDao;
     private ResourceDao m_resourceDao;
@@ -274,11 +278,11 @@ public class DefaultSurveillanceService implements SurveillanceService, Initiali
 
     private View getView() {
         String user = getUsername();
-        log().debug("Looking for surveillance view that matches user '" + user + "'");
+        LOG.debug("Looking for surveillance view that matches user '{}'", user);
         
         View userView = m_surveillanceViewConfigDao.getView(user);
         if (userView != null) {
-            log().debug("Found surveillance view '" + userView.getName() + "' matching user name '" + user + "'");
+            LOG.debug("Found surveillance view '{}' matching user name '{}'", userView.getName(), user);
             return userView;
         }
         
@@ -286,7 +290,7 @@ public class DefaultSurveillanceService implements SurveillanceService, Initiali
         for (Group group : groups) {
             View groupView = m_surveillanceViewConfigDao.getView(group.getName());
             if (groupView != null) {
-                log().debug("Found surveillance view '" + groupView.getName() + "' matching group '" + group.getName() + "' name for user '" + user + "'");
+                LOG.debug("Found surveillance view '{}' matching group '{}' name for user '{}'", groupView.getName(), group.getName(), user);
                 return groupView;
             }
         }
@@ -294,16 +298,12 @@ public class DefaultSurveillanceService implements SurveillanceService, Initiali
         View defaultView = m_surveillanceViewConfigDao.getDefaultView();
         if (defaultView == null) {
             String message = "There is no default surveillance view and we could not find a surviellance view for the user's username ('" + user + "') or any of their groups";
-            log().warn(message);
+            LOG.warn(message);
             throw new ObjectRetrievalFailureException(View.class, message);
         }
         
-        log().debug("Did not find a surveillance view matching the user's user name or one of their group names.  Using the default view for user '" + user + "'");
+        LOG.debug("Did not find a surveillance view matching the user's user name or one of their group names.  Using the default view for user '{}'", user);
         return defaultView;
-    }
-    
-    private ThreadCategory log() {
-        return ThreadCategory.getInstance(getClass());
     }
 
 
@@ -345,7 +345,7 @@ public class DefaultSurveillanceService implements SurveillanceService, Initiali
         if((context != null) && !(context.toString().contains(org.opennms.web.springframework.security.Authentication.ROLE_DASHBOARD))) {
             isDashboardRole = false;
         }
-        log().debug("User " + getUsername() + " is in dashboard role? " + isDashboardRole);
+        LOG.debug("User {} is in dashboard role? {}", getUsername(), isDashboardRole);
         return isDashboardRole;
     }
 

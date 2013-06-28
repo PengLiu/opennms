@@ -41,7 +41,8 @@ import org.junit.runner.RunWith;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.utils.BeanUtils;
-import org.opennms.core.utils.LogUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.opennms.netmgt.config.provisiond.RequisitionDef;
 import org.opennms.netmgt.dao.api.ProvisiondConfigurationDao;
 import org.opennms.test.JUnitConfigurationEnvironment;
@@ -71,6 +72,7 @@ import org.springframework.test.context.ContextConfiguration;
 })
 @JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
 public class ImportSchedulerTest implements InitializingBean {
+    private static final Logger LOG = LoggerFactory.getLogger(ImportSchedulerTest.class);
     
     @Autowired
     ImportJobFactory m_factory;
@@ -127,13 +129,13 @@ public class ImportSchedulerTest implements InitializingBean {
 
             @Override
             public void triggerComplete(Trigger trigger, JobExecutionContext context, int triggerInstructionCode) {
-                LogUtils.infof(this, "triggerComplete called on trigger listener");
+                LOG.info("triggerComplete called on trigger listener");
                 callTracker.setCalled(true);
             }
 
             @Override
             public void triggerFired(Trigger trigger, JobExecutionContext context) {
-                LogUtils.infof(this, "triggerFired called on trigger listener");
+                LOG.info("triggerFired called on trigger listener");
                 Job jobInstance = context.getJobInstance();
                 
                 if (jobInstance instanceof ImportJob) {
@@ -146,13 +148,13 @@ public class ImportSchedulerTest implements InitializingBean {
 
             @Override
             public void triggerMisfired(Trigger trigger) {
-                LogUtils.infof(this, "triggerMisFired called on trigger listener");
+                LOG.info("triggerMisFired called on trigger listener");
                 callTracker.setCalled(true);
             }
 
             @Override
             public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
-                LogUtils.infof(this, "vetoJobExecution called on trigger listener");
+                LOG.info("vetoJobExecution called on trigger listener");
                 callTracker.setCalled(true);
                 return false;
             }

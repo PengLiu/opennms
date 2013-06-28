@@ -31,7 +31,6 @@ package org.opennms.netmgt.dao;
 import java.util.Date;
 
 import org.opennms.core.utils.InetAddressUtils;
-import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.dao.api.AcknowledgmentDao;
 import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.dao.api.AssetRecordDao;
@@ -71,6 +70,8 @@ import org.opennms.netmgt.model.OnmsServiceType;
 import org.opennms.netmgt.model.OnmsSeverity;
 import org.opennms.netmgt.model.OnmsSnmpInterface;
 import org.opennms.netmgt.model.OnmsUserNotification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
@@ -103,6 +104,8 @@ import org.springframework.transaction.support.TransactionOperations;
  * @author <a href="mailto:dj@opennms.org">DJ Gregor</a>
  */
 public class DatabasePopulator {
+    private static final Logger LOG = LoggerFactory.getLogger(DatabasePopulator.class);
+
     private DistPollerDao m_distPollerDao;
     private NodeDao m_nodeDao;
     private IpInterfaceDao m_ipInterfaceDao;
@@ -155,7 +158,7 @@ public class DatabasePopulator {
     }
 
     public void resetDatabase() {
-        LogUtils.debugf(this, "==== DatabasePopulator Reset ====");
+        LOG.debug("==== DatabasePopulator Reset ====");
         for (final DataLinkInterface iface : m_dataLinkInterfaceDao.findAll()) {
             m_dataLinkInterfaceDao.delete(iface);
         }
@@ -196,11 +199,11 @@ public class DatabasePopulator {
         m_ipInterfaceDao.flush();
         m_nodeDao.flush();
         m_serviceTypeDao.flush();
-        LogUtils.debugf(this, "==== DatabasePopulator Reset Finished ====");
+        LOG.debug("==== DatabasePopulator Reset Finished ====");
     }
 
     private void doPopulateDatabase() {
-        LogUtils.debugf(this, "==== DatabasePopulator Starting ====");
+        LOG.debug("==== DatabasePopulator Starting ====");
         final OnmsDistPoller distPoller = getDistPoller("localhost", "127.0.0.1");
         final NetworkBuilder builder = new NetworkBuilder(distPoller);
         
@@ -298,7 +301,7 @@ public class DatabasePopulator {
         ack.setAckUser("admin");
         getAcknowledgmentDao().save(ack);
         getAcknowledgmentDao().flush();
-        LogUtils.debugf(this, "==== DatabasePopulator Finished ====");
+        LOG.debug("==== DatabasePopulator Finished ====");
     }
 
     private OnmsCategory getCategory(final String categoryName) {

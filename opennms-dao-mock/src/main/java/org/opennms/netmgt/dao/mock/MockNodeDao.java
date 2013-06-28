@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.model.OnmsCategory;
@@ -18,8 +17,11 @@ import org.opennms.netmgt.model.OnmsIpInterface;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsSnmpInterface;
 import org.opennms.netmgt.model.SurveillanceStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements NodeDao {
+    private static final Logger LOG = LoggerFactory.getLogger(MockNodeDao.class);
     private AtomicInteger m_id = new AtomicInteger(0);
 
     @Override
@@ -233,7 +235,7 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
         if (node == null) return;
 
         for (final OnmsIpInterface iface : findObsoleteIpInterfaces(nodeId, scanStamp)) {
-            LogUtils.debugf(this, "Deleting obsolete IP interface: %s", iface);
+            LOG.debug("Deleting obsolete IP interface: {}", iface);
             node.getIpInterfaces().remove(iface);
             getIpInterfaceDao().delete(iface.getId());
         }
@@ -241,7 +243,7 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
         for (final OnmsSnmpInterface iface : snmpInterfaces) {
             if (iface.getLastCapsdPoll() == null
                     || iface.getLastCapsdPoll().before(scanStamp)) {
-                LogUtils.debugf(this, "Deleting obsolete SNMP interface: %s", iface);
+                LOG.debug("Deleting obsolete SNMP interface: {}", iface);
                 snmpInterfaces.remove(iface);
                 getSnmpInterfaceDao().delete(iface.getId());
             }

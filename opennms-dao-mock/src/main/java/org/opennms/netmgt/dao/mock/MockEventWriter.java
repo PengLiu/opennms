@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.EventConstants;
 import org.opennms.netmgt.dao.api.DistPollerDao;
 import org.opennms.netmgt.dao.api.EventDao;
@@ -21,11 +20,15 @@ import org.opennms.netmgt.model.events.Parameter;
 import org.opennms.netmgt.xml.event.Event;
 import org.opennms.netmgt.xml.event.Header;
 import org.opennms.netmgt.xml.event.Operaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 
 public class MockEventWriter implements EventProcessor, InitializingBean {
+    private static final Logger LOG = LoggerFactory.getLogger(MockEventWriter.class);
+
     private static final int EVENT_AUTOACTION_FIELD_SIZE = 256;
     private static final int EVENT_CORRELATION_FIELD_SIZE = 1024;
     private static final int EVENT_FORWARD_FIELD_SIZE = 256;
@@ -82,7 +85,7 @@ public class MockEventWriter implements EventProcessor, InitializingBean {
 
     @Override
     public void process(final Header eventHeader, final Event event) throws EventProcessorException {
-        LogUtils.debugf(this, "Writing event: %s", event);
+        LOG.debug("Writing event: {}", event);
         final OnmsEvent oe = new OnmsEvent();
         oe.setEventAutoAction((event.getAutoactionCount() > 0) ? AutoAction.format(event.getAutoaction(), EVENT_AUTOACTION_FIELD_SIZE) : null);
         oe.setEventCorrelation((event.getCorrelation() != null) ? org.opennms.netmgt.dao.util.Correlation.format(event.getCorrelation(), EVENT_CORRELATION_FIELD_SIZE) : null);

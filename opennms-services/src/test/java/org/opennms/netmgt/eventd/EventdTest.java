@@ -43,7 +43,6 @@ import org.opennms.core.criteria.CriteriaBuilder;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.utils.BeanUtils;
-import org.opennms.core.utils.LogUtils;
 import org.opennms.netmgt.EventConstants;
 import org.opennms.netmgt.dao.DatabasePopulator;
 import org.opennms.netmgt.dao.api.EventDao;
@@ -104,19 +103,15 @@ public class EventdTest implements InitializingBean {
     @Before
     public void setUp() {
         MockLogAppender.setupLogging();
-        LogUtils.debugf(this, "==== setUp Start ====");
         m_databasePopulator.populateDatabase();
         m_eventd.onStart();
-        LogUtils.debugf(this, "==== setUp Complete ====");
     }
 
     @After
     public void tearDown() {
-        LogUtils.debugf(this, "==== tearDown Start ====");
         m_eventd.onStop();
         m_databasePopulator.resetDatabase();
         MockLogAppender.assertNoWarningsOrGreater();
-        LogUtils.debugf(this, "==== tearDown Complete ====");
     }
 
     @Test

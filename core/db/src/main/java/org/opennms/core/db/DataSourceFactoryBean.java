@@ -28,11 +28,12 @@
 
 package org.opennms.core.db;
 
+
 import javax.sql.DataSource;
 
-import org.opennms.core.db.DataSourceFactory;
 import org.opennms.core.resource.Vault;
-import org.opennms.core.utils.ThreadCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -41,6 +42,8 @@ import org.springframework.beans.factory.InitializingBean;
  * <p>DataSourceFactoryBean class.</p>
  */
 public class DataSourceFactoryBean implements FactoryBean<DataSource>, InitializingBean, DisposableBean {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DataSourceFactoryBean.class);
 
     /**
      * <p>getObject</p>
@@ -91,12 +94,8 @@ public class DataSourceFactoryBean implements FactoryBean<DataSource>, Initializ
      */
     @Override
     public void destroy() throws Exception {
-        log().info("Closing DataSourceFactory!!!");
+        LOG.info("Closing DataSourceFactory!!!");
         DataSourceFactory.close();
-    }
-
-    private ThreadCategory log() {
-        return ThreadCategory.getInstance(getClass());
     }
 
 }
