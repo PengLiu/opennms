@@ -26,52 +26,14 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.systemreport.dao;
+package org.opennms.netmgt.dao.api;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.util.Set;
 
-public class CountedObject<T> implements Comparable<CountedObject<T>> {
-    private T m_object;
-    private long m_count;
+import org.opennms.netmgt.model.OnmsEvent;
 
-    public CountedObject() {
-    }
-
-    public CountedObject(final T object, final Long count) {
-        m_object = object;
-        m_count = count;
-    }
-
-    public void setObject(final T object) {
-        m_object = object;
-    }
-
-    public T getObject() {
-        return m_object;
-    }
+public interface EventCountDao extends OnmsDao<OnmsEvent, Integer> {
     
-    public void setCount(final int count) {
-        m_count = count;
-    }
-    
-    public Long getCount() {
-        return m_count;
-    }
+    Set<CountedObject<String>> getUeiCounts(final Integer limit);
 
-    @Override
-    public int compareTo(final CountedObject<T> o) {
-        return new CompareToBuilder()
-            .append(this.getCount(), (o == null? null:o.getCount()))
-            .append(this.getObject(), (o == null? null:o.getObject()))
-            .toComparison();
-    }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append(this.getObject())
-            .append(this.getCount())
-            .toString();
-    }
 }

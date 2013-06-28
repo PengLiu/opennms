@@ -111,11 +111,24 @@ final class BeanWrapperRestrictionVisitor<T> extends BaseRestrictionVisitor {
     }
     @Override public void visitLeComplete(final LeRestriction restriction) {}
     @Override public void visitAll(final AllRestriction restriction) {
-        throw new UnsupportedOperationException("Not Yet Implemented!");
+        for (final Restriction r : restriction.getRestrictions()) {
+            r.visit(this);
+        }
     }
     @Override public void visitAllComplete(final AllRestriction restriction) {}
     @Override public void visitAny(final AnyRestriction restriction) {
-        throw new UnsupportedOperationException("Not Yet Implemented!");
+        boolean matched = false;
+        for (final Restriction r : restriction.getRestrictions()) {
+            try {
+                r.visit(this);
+                matched = true;
+                break;
+            } catch (final Exception e) {
+            }
+        }
+        if (!matched) {
+            fail(restriction);
+        }
     }
     @Override public void visitAnyComplete(final AnyRestriction restriction) {}
     @Override public void visitLike(final LikeRestriction restriction) {

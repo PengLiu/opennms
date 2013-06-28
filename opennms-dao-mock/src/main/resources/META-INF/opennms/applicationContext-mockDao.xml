@@ -55,7 +55,8 @@
 
     <bean id="eventDao" class="org.opennms.netmgt.dao.mock.MockEventDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.EventDao" ref="eventDao" />
-
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.EventCountDao" ref="eventDao" />
+    
     <bean id="ipInterfaceDao" class="org.opennms.netmgt.dao.mock.MockIpInterfaceDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.IpInterfaceDao" ref="ipInterfaceDao" />
 
