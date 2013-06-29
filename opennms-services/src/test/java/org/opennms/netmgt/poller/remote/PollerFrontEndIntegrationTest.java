@@ -50,6 +50,7 @@ import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
@@ -112,6 +113,7 @@ public class PollerFrontEndIntegrationTest implements InitializingBean, Temporar
     }
 
     @Test
+    @Transactional
     public void testRegister() throws Exception {
 
         // Check preconditions
@@ -124,13 +126,21 @@ public class PollerFrontEndIntegrationTest implements InitializingBean, Temporar
         m_frontEnd.register("RDU");
         Integer monitorId = m_settings.getMonitorId();
 
+        long wait = 60000L;
+        while (wait > 0) {
+            Thread.sleep(1000L);
+            wait -= 1000L;
+
+            if (getMonitorCount(monitorId) == 1) break;
+        }
+
         assertTrue(m_frontEnd.isRegistered());
         assertEquals(1, getMonitorCount(monitorId));
         assertEquals(5, m_database.getJdbcTemplate().queryForInt("select count(*) from location_monitor_details where locationMonitorId = ?", monitorId));
 
         assertEquals(System.getProperty("os.name"), m_database.getJdbcTemplate().queryForObject("select propertyValue from location_monitor_details where locationMonitorId = ? and property = ?", String.class, monitorId, "os.name"));
 
-        long wait = 60000L;
+        wait = 60000L;
         while (wait > 0) {
             Thread.sleep(1000L);
             wait -= 1000L;
