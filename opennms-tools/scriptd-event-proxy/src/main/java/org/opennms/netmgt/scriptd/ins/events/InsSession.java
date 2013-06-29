@@ -63,7 +63,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 class InsSession extends InsAbstractSession {
-        private static final Logger LOG = LoggerFactory.getLogger(InsSession.class);
+	private static final Logger LOG = LoggerFactory.getLogger(InsSession.class);
 
 	private Socket server;
 

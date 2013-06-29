@@ -42,9 +42,6 @@ import org.opennms.netmgt.xml.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
-
 /**
  * The InsServerListener will accept input from a socket, create a InsSession in
  * which communicate with an InsClient for the alarm synchronization.
@@ -53,8 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class InsServerListener extends InsServerAbstractListener {
-        private static final Logger LOG = LoggerFactory.getLogger(InsServerListener.class);
-    
+	private static final Logger LOG = LoggerFactory.getLogger(InsServerListener.class);
 	private ServerSocket m_listener;
 	private final Set<InsSession> m_activeSessions = new HashSet<InsSession>();
 
