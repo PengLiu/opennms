@@ -41,7 +41,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.test.db.TemporaryDatabaseExecutionListener;
-import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.gwt.web.ui.asset.server.AssetServiceImpl;
 import org.opennms.gwt.web.ui.asset.shared.AssetCommand;
 import org.opennms.netmgt.dao.DatabasePopulator;
@@ -77,11 +76,8 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 		TransactionalTestExecutionListener.class })
 @ContextConfiguration(locations = {
 		"classpath:/META-INF/opennms/applicationContext-soa.xml",
-		"classpath:/META-INF/opennms/applicationContext-dao.xml",
-		"classpath:/META-INF/opennms/applicationContext-databasePopulator.xml",
-		"classpath:/META-INF/opennms/applicationContext-setupIpLike-enabled.xml",
+	        "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
 		"classpath*:/META-INF/opennms/component-dao.xml" })
-@JUnitTemporaryDatabase
 @JUnitConfigurationEnvironment
 public class AssetServiceImplTest implements InitializingBean {
 

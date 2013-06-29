@@ -1,6 +1,10 @@
 package org.opennms.netmgt.dao.mock;
 
+import static org.opennms.core.utils.InetAddressUtils.addr;
+
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,17 +59,32 @@ public class MockMonitoredServiceDao extends AbstractMockDao<OnmsMonitoredServic
 
     @Override
     public OnmsMonitoredService get(final Integer nodeId, final String ipAddr, final Integer ifIndex, final Integer serviceId) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsMonitoredService svc : findAll()) {
+            if (svc.getNodeId() == nodeId && svc.getIpAddress().equals(addr(ipAddr)) && ifIndex == svc.getIfIndex() && serviceId == svc.getId()) {
+                return svc;
+            }
+        }
+        return null;
     }
 
     @Override
     public OnmsMonitoredService get(final Integer nodeId, final String ipAddr, final Integer serviceId) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsMonitoredService svc : findAll()) {
+            if (svc.getNodeId() == nodeId && svc.getIpAddress().equals(ipAddr) && serviceId == svc.getId()) {
+                return svc;
+            }
+        }
+        return null;
     }
 
     @Override
     public OnmsMonitoredService get(final Integer nodeId, final InetAddress ipAddr, final Integer ifIndex, final Integer serviceId) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsMonitoredService svc : findAll()) {
+            if (svc.getNodeId() == nodeId && svc.getIpAddress().equals(ipAddr) && ifIndex == svc.getIfIndex() && serviceId == svc.getId()) {
+                return svc;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -80,7 +99,13 @@ public class MockMonitoredServiceDao extends AbstractMockDao<OnmsMonitoredServic
 
     @Override
     public List<OnmsMonitoredService> findByType(final String typeName) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final List<OnmsMonitoredService> services = new ArrayList<OnmsMonitoredService>();
+        for (final OnmsMonitoredService svc : findAll()) {
+            if (typeName.equals(svc.getServiceType().getName())) {
+                services.add(svc);
+            }
+        }
+        return services;
     }
 
     @Override
@@ -90,12 +115,23 @@ public class MockMonitoredServiceDao extends AbstractMockDao<OnmsMonitoredServic
 
     @Override
     public Set<OnmsMonitoredService> findByApplication(final OnmsApplication application) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final Set<OnmsMonitoredService> services = new HashSet<OnmsMonitoredService>();
+        for (final OnmsMonitoredService svc : findAll()) {
+            if (svc.getApplications().contains(application)) {
+                services.add(svc);
+            }
+        }
+        return services;
     }
 
     @Override
     public OnmsMonitoredService getPrimaryService(final Integer nodeId, final String svcName) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsMonitoredService svc : findAll()) {
+            if (svc.getNodeId() == nodeId && svcName.equals(svc.getServiceName()) && svc.getIpInterface().isPrimary()) {
+                return svc;
+            }
+        }
+        return null;
     }
 
 }

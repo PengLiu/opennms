@@ -63,6 +63,7 @@ import org.opennms.netmgt.model.OnmsIpInterface;
 import org.opennms.netmgt.model.OnmsMap;
 import org.opennms.netmgt.model.OnmsMapElement;
 import org.opennms.netmgt.model.OnmsMonitoredService;
+import org.opennms.netmgt.model.OnmsMonitoringLocationDefinition;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.OnmsNotification;
 import org.opennms.netmgt.model.OnmsOutage;
@@ -301,6 +302,16 @@ public class DatabasePopulator {
         ack.setAckUser("admin");
         getAcknowledgmentDao().save(ack);
         getAcknowledgmentDao().flush();
+        
+        final OnmsMonitoringLocationDefinition def = new OnmsMonitoringLocationDefinition();
+        def.setName("RDU");
+        def.setArea("East Coast");
+        def.setPollingPackageName("example1");
+        def.setGeolocation("Research Triangle Park, NC");
+        def.setCoordinates("35.715751,-79.16262");
+        def.setPriority(1L);
+        m_locationMonitorDao.saveMonitoringLocationDefinition(def);
+
         LOG.debug("==== DatabasePopulator Finished ====");
     }
 

@@ -1,4 +1,5 @@
 package org.opennms.netmgt.dao.mock;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,17 +23,26 @@ public class MockAssetRecordDao extends AbstractMockDao<OnmsAssetRecord, Integer
 
     @Override
     public OnmsAssetRecord findByNodeId(final Integer id) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        for (final OnmsAssetRecord asset : findAll()) {
+            if (asset.getNode().getId() == id) {
+                return asset;
+            }
+        }
+        return null;
     }
 
     @Override
     public Map<String, Integer> findImportedAssetNumbersToNodeIds(final String foreignSource) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final Map<String,Integer> ret = new HashMap<String,Integer>();
+        for (final OnmsAssetRecord asset : findAll()) {
+            ret.put(asset.getAssetNumber(), asset.getNode().getId());
+        }
+        return ret;
     }
 
     @Override
     public List<OnmsAssetRecord> getDistinctProperties() {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        return findAll();
     }
 
 }
