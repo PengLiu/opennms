@@ -2,7 +2,10 @@ package org.opennms.netmgt.dao.mock;
 
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
+import org.opennms.core.criteria.Alias;
 import org.opennms.core.criteria.restrictions.AllRestriction;
 import org.opennms.core.criteria.restrictions.AnyRestriction;
 import org.opennms.core.criteria.restrictions.AttributeRestriction;
@@ -23,27 +26,83 @@ import org.opennms.core.criteria.restrictions.NotRestriction;
 import org.opennms.core.criteria.restrictions.NullRestriction;
 import org.opennms.core.criteria.restrictions.Restriction;
 import org.opennms.core.criteria.restrictions.SqlRestriction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-final class BeanWrapperRestrictionVisitor<T> extends BaseRestrictionVisitor {
-    private T m_entity;
-    private BeanWrapper m_beanWrapper;
+final class BeanWrapperRestrictionVisitor extends BaseRestrictionVisitor {
+    private static final Logger LOG = LoggerFactory.getLogger(BeanWrapperRestrictionVisitor.class);
 
-    public BeanWrapperRestrictionVisitor(final T entity) {
-        m_entity = entity;
+    private final Object m_entity;
+    private final List<Alias> m_aliases;
+    private final BeanWrapper m_beanWrapper;
+
+    private boolean m_matched = true;
+
+    public BeanWrapperRestrictionVisitor(final Object obj) {
+        this(obj, null);
+    }
+
+    public BeanWrapperRestrictionVisitor(final Object obj, final List<Alias> aliases) {
+        m_entity = obj;
+        m_aliases = aliases;
         m_beanWrapper = new BeanWrapperImpl(m_entity);
     }
 
     protected void fail(final Restriction restriction) {
-        throw new BeanWrapperRestrictionFailure(m_entity  + " failed restriction: " + restriction);
+        m_matched = false;
+        LOG.debug("{} failed restriction: {}", m_entity, restriction);
     }
 
-    protected Object getProperty(final String attribute) {
-        for (final PropertyDescriptor pd : m_beanWrapper.getPropertyDescriptors()) {
-            if (pd.getName().equalsIgnoreCase(attribute)) {
-                return m_beanWrapper.getPropertyValue(pd.getName());
+    public Object getProperty(final String attribute) {
+        LOG.debug("getProperty({})", attribute);
+        final String[] attributes = attribute.split("\\.", 2);
+        LOG.debug("attributes = {}", Arrays.asList(attributes));
+        if (attributes.length == 1) {
+            for (final PropertyDescriptor pd : m_beanWrapper.getPropertyDescriptors()) {
+                if (pd.getName().equalsIgnoreCase(attribute)) {
+                    return m_beanWrapper.getPropertyValue(pd.getName());
+                }
+                for (final Alias alias : m_aliases) {
+                    if (alias.getAlias().equalsIgnoreCase(attribute)) {
+                        if (pd.getName().equalsIgnoreCase(alias.getAssociationPath())) {
+                            return m_beanWrapper.getPropertyValue(pd.getName());
+                        }
+                    }
+                }
             }
+        } else if (attributes.length > 1) {
+            LOG.debug("more than one attribute, try walking the tree");
+            for (final PropertyDescriptor pd : m_beanWrapper.getPropertyDescriptors()) {
+                final String attributeName = attributes[0];
+                final String subAttributes = attributes[1];
+                if (pd.getName().equalsIgnoreCase(attributeName)) {
+                    final Object propertyValue = m_beanWrapper.getPropertyValue(pd.getName());
+                    final BeanWrapperRestrictionVisitor subVisitor = new BeanWrapperRestrictionVisitor(propertyValue, m_aliases);
+                    final Object property = subVisitor.getProperty(subAttributes);
+                    LOG.debug("Found a sub-attribute: {} = {}", attribute, property);
+                    return property;
+                }
+                for (final Alias alias : m_aliases) {
+                    final String aliasName = alias.getAlias();
+                    final String aliasPath = alias.getAssociationPath();
+
+                    //LOG.debug("alias = {}, path = {}", aliasName, aliasPath);
+                    if (aliasName.equalsIgnoreCase(attributeName)) {
+                        // LOG.debug("property name = {}, aliasName = {}, aliasPath = {}, attributeName = {}", pd.getName(), aliasName, aliasPath, attributeName);
+                        if (pd.getName().equalsIgnoreCase(aliasPath)) {
+                            final Object propertyValue = m_beanWrapper.getPropertyValue(pd.getName());
+                            final BeanWrapperRestrictionVisitor subVisitor = new BeanWrapperRestrictionVisitor(propertyValue, m_aliases);
+                            final Object property = subVisitor.getProperty(subAttributes);
+                            LOG.debug("Found a sub-attribute: {} = {}", attribute, property);
+                            return property;
+                        }
+                    }
+                }
+            }
+        } else {
+            LOG.warn("Uhh... 0 attributes?  How did we get here?");
         }
         return null;
     }
@@ -144,7 +203,8 @@ final class BeanWrapperRestrictionVisitor<T> extends BaseRestrictionVisitor {
     }
     @Override public void visitInComplete(final InRestriction restriction) {}
     @Override public void visitNot(final NotRestriction restriction) {
-        throw new UnsupportedOperationException("Not Yet Implemented!");
+        restriction.getRestriction().visit(this);
+        m_matched = !m_matched;
     }
     @Override public void visitNotComplete(final NotRestriction restriction) {}
     @Override public void visitBetween(final BetweenRestriction restriction) {
@@ -159,4 +219,8 @@ final class BeanWrapperRestrictionVisitor<T> extends BaseRestrictionVisitor {
         throw new UnsupportedOperationException("Not Yet Implemented!");
     }
     @Override public void visitIplikeComplete(final IplikeRestriction restriction) {}
+
+    public boolean matches() {
+        return m_matched ;
+    }
 }

@@ -2,13 +2,13 @@ package org.opennms.netmgt.dao.mock;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.opennms.core.criteria.Criteria;
-import org.opennms.core.criteria.restrictions.Restriction;
 import org.opennms.core.soa.ServiceRegistry;
 import org.opennms.netmgt.dao.api.AlarmDao;
 import org.opennms.netmgt.dao.api.AssetRecordDao;
@@ -100,22 +100,13 @@ public abstract class AbstractMockDao<T, K extends Serializable> implements Onms
         return new ArrayList<T>(m_entries.values());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> findMatching(final Criteria criteria) {
-        final List<T> matching = new ArrayList<T>();
-        for (final T entity : findAll()) {
-            LOG.debug("findMatching({}), entity = {}", criteria, entity);
-            final BeanWrapperRestrictionVisitor<T> visitor = new BeanWrapperRestrictionVisitor<T>(entity);
-            try {
-                for (final Restriction restriction : criteria.getRestrictions()) {
-                    restriction.visit(visitor);
-                }
-                matching.add(entity);
-            } catch (final BeanWrapperRestrictionFailure e) {
-                LOG.debug("Failed to match to criteria {}: {}", criteria, e.getMessage());
-            }
-        }
-        return matching;
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(findAll());
+        criteria.visit(visitor);
+        final Collection<? extends T> matches = (Collection<? extends T>)visitor.getMatches();
+        return new ArrayList<T>(matches);
     }
 
     @Override

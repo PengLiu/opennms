@@ -32,7 +32,7 @@
       <property name="annotatedListener" ref="receiver" />
       <property name="eventSubscriptionService" ref="eventSubscriptionService" />
     </bean>
-
+    
     <bean name="daemon" class="org.opennms.netmgt.linkd.Linkd">
       <property name="eventForwarder" ref="eventForwarder" />
     </bean>

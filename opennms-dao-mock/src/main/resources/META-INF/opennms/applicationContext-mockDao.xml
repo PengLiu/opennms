@@ -11,9 +11,24 @@
         http://xmlns.opennms.org/xsd/spring/onms-osgi http://xmlns.opennms.org/xsd/spring/onms-osgi.xsd
     ">
 
+    <context:annotation-config />
+
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
         <property name="location" value="file:${opennms.home}/etc/model-importer.properties" />
+    </bean>
+
+    <bean id="dataSource" class="org.opennms.netmgt.dao.mock.MockDataSource" />
+    <!-- <onmsgi:service interface="javax.sql.DataSource" ref="dataSource" /> -->
+    <bean id="dataSourceFactory-init" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod">
+            <value>org.opennms.core.db.DataSourceFactory.setInstance</value>
+        </property>
+        <property name="arguments">
+            <list>
+                <ref bean="dataSource" />
+            </list>
+        </property>
     </bean>
 
     <bean id="transactionManager" class="org.opennms.netmgt.dao.mock.MockTransactionManager" />
@@ -35,6 +50,9 @@
 
     <bean id="assetRecordDao" class="org.opennms.netmgt.dao.mock.MockAssetRecordDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.AssetRecordDao" ref="assetRecordDao" />
+
+    <bean id="atInterfaceDao" class="org.opennms.netmgt.dao.mock.MockAtInterfaceDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.AtInterfaceDao" ref="atInterfaceDao" />
 
     <bean id="categoryDao" class="org.opennms.netmgt.dao.mock.MockCategoryDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.CategoryDao" ref="categoryDao" />
@@ -151,6 +169,16 @@
     </bean>
     <bean id="dataCollectionConfig" class="org.opennms.netmgt.config.DataCollectionConfigFactory" depends-on="dataCollectionConfig-init" factory-method="getInstance" />
     <onmsgi:service interface="org.opennms.netmgt.config.DataCollectionConfigDao" ref="dataCollectionConfigDao" />
+
+    <bean id="filterDaoFactory-init" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod"><value>org.opennms.netmgt.filter.FilterDaoFactory.setInstance</value></property>
+        <property name="arguments">
+            <bean id="mockFilterDao" class="org.opennms.netmgt.dao.mock.MockFilterDao">
+        <property name="ipInterfaceDao" ref="ipInterfaceDao" />
+            </bean>
+        </property>
+    </bean>
+    <bean id="filterDao" class="org.opennms.netmgt.filter.FilterDaoFactory" depends-on="filterDaoFactory-init" factory-method="getInstance" />
 
     <bean id="databasePopulator" class="org.opennms.netmgt.dao.DatabasePopulator">
         <property name="populateInSeparateTransaction" value="true" />
