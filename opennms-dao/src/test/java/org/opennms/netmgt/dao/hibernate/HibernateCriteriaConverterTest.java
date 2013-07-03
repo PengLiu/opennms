@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.criteria.Alias.JoinType;
@@ -121,7 +120,6 @@ public class HibernateCriteriaConverterTest implements InitializingBean {
     @Test
     @Transactional
     @JUnitTemporaryDatabase
-    @Ignore
     public void testNodeIlikeQuery() {
         for (final OnmsNode node : m_nodeDao.findAll()) {
             if (node.getLabel().equals("node1")) {
