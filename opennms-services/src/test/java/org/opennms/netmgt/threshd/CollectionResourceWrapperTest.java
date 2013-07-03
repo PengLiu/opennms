@@ -74,8 +74,8 @@ import org.opennms.netmgt.snmp.SnmpValue;
  *
  */
 public class CollectionResourceWrapperTest {
+    private boolean m_ignoreWarnings = false;
 
-    
     @Before
     public void setUp() throws Exception {
         CollectionResourceWrapper.s_cache.clear();
@@ -84,7 +84,7 @@ public class CollectionResourceWrapperTest {
 
     @After
     public void tearDown() throws Exception {
-        MockLogAppender.assertNoWarningsOrGreater();
+        if (!m_ignoreWarnings ) MockLogAppender.assertNoWarningsOrGreater();
     }
     
     @Test
@@ -198,7 +198,7 @@ public class CollectionResourceWrapperTest {
       */
 	@Test
 	public void testGetCounterValueWithGap() throws Exception {
-
+	        m_ignoreWarnings = true; // we get a warning on the first getAttributeValue()
 
 		CollectionAgent agent = createCollectionAgent();
 		SnmpCollectionResource resource = createNodeResource(agent);
