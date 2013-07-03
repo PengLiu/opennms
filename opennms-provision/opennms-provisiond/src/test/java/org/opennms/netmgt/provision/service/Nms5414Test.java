@@ -74,7 +74,8 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath*:/META-INF/opennms/provisiond-extensions.xml",
         "classpath*:/META-INF/opennms/detectors.xml",
         "classpath:/mockForeignSourceContext.xml",
-        "classpath:/importerServiceTest.xml"
+        "classpath:/importerServiceTest.xml",
+        "classpath:/META-INF/opennms/applicationContext-minimal-conf.xml"
 })
 @JUnitConfigurationEnvironment(systemProperties="org.opennms.provisiond.enableDiscovery=false")
 public class Nms5414Test {

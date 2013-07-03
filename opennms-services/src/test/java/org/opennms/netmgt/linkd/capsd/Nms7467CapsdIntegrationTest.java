@@ -70,7 +70,7 @@ import org.springframework.transaction.annotation.Transactional;
         "classpath:/META-INF/opennms/applicationContext-commonConfigs.xml",
         "classpath:/META-INF/opennms/applicationContext-capsd.xml",
         // import simple defined events
-        "classpath:/META-INF/opennms/smallEventConfDao.xml",
+        "classpath:/META-INF/opennms/applicationContext-minimal-conf.xml",
         // Override the capsd config with a stripped-down version
         "classpath:/META-INF/opennms/capsdTest.xml",
         // override snmp-config configuration
