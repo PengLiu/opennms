@@ -85,7 +85,8 @@ import de.novanic.eventservice.service.EventExecutorService;
         "classpath*:/META-INF/opennms/component-dao.xml",
         "classpath:/META-INF/opennms/applicationContext-daemon.xml",
         "file:src/main/webapp/WEB-INF/applicationContext-remote-poller.xml",
-        "classpath:/locationDataManagerTest.xml"
+        "classpath:/locationDataManagerTest.xml",
+        "classpath:META-INF/opennms/applicationContext-minimal-conf.xml"
 })
 @JUnitConfigurationEnvironment
 @JUnitTemporaryDatabase(useExistingDatabase="opennms")

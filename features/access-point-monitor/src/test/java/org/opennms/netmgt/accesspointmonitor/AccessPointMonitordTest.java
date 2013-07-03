@@ -74,7 +74,7 @@ import org.springframework.transaction.PlatformTransactionManager;
     "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
     "classpath:META-INF/opennms/applicationContext-commonConfigs.xml",
     "classpath:META-INF/opennms/applicationContext-accesspointmonitord.xml",
-    "classpath:META-INF/opennms/smallEventConfDao.xml"
+    "classpath:META-INF/opennms/applicationContext-minimal-conf.xml"
 })
 @JUnitConfigurationEnvironment
 @JUnitTemporaryDatabase

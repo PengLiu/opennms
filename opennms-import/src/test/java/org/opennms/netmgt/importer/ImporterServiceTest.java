@@ -56,7 +56,7 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/META-INF/opennms/applicationContext-daemon.xml",
         "classpath:/META-INF/opennms/mockEventIpcManager.xml",
         "classpath:/META-INF/opennms/applicationContext-importer.xml",
-        "classpath:/META-INF/opennms/smallEventConfDao.xml",
+        "classpath:/META-INF/opennms/applicationContext-minimal-conf.xml",
         "classpath:/importerServiceTest.xml"
 })
 @JUnitConfigurationEnvironment

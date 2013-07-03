@@ -71,7 +71,8 @@ import org.springframework.util.Assert;
 		"classpath:/META-INF/opennms/mockEventIpcManager.xml",
 		"classpath:/META-INF/opennms/applicationContext-databasePopulator.xml",
 		"classpath*:/META-INF/opennms/provisiond-extensions.xml",
-		"classpath*:/META-INF/opennms/component-dao.xml"
+		"classpath*:/META-INF/opennms/component-dao.xml",
+	        "classpath:/META-INF/opennms/applicationContext-minimal-conf.xml"
 })
 @JUnitConfigurationEnvironment
 @JUnitTemporaryDatabase
