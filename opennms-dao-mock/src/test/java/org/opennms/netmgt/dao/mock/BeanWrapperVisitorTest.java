@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opennms.core.criteria.Criteria;
 import org.opennms.core.criteria.CriteriaBuilder;
+import org.opennms.netmgt.EventConstants;
+import org.opennms.netmgt.model.OnmsEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,5 +219,27 @@ public class BeanWrapperVisitorTest {
         LOG.debug("criteria = {}", criteria);
         criteria.visit(m_visitor);
         assertEquals(0, m_visitor.getMatches().size());
+    }
+    
+    @Test
+    public void testEventsMatching() {
+        final CriteriaBuilder cb = new CriteriaBuilder(OnmsEvent.class);
+        cb.eq("eventuei", EventConstants.NODE_DOWN_EVENT_UEI);
+        cb.isNull("ipaddr");
+        
+        final List<OnmsEvent> events = new ArrayList<OnmsEvent>();
+        events.add(createEvent(1, "uei.opennms.org/test"));
+        events.add(createEvent(2, EventConstants.NODE_DOWN_EVENT_UEI));
+        events.add(createEvent(3, EventConstants.NODE_DOWN_EVENT_UEI));
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(events);
+        cb.toCriteria().visit(visitor);
+        assertEquals(2, visitor.getMatches().size());
+    }
+
+    private OnmsEvent createEvent(final int id, final String uei) {
+        final OnmsEvent event = new OnmsEvent();
+        event.setId(id);
+        event.setEventUei(uei);
+        return event;
     }
 }

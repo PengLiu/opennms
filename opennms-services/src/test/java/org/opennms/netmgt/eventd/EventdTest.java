@@ -137,7 +137,7 @@ public class EventdTest implements InitializingBean {
 
         assertNull(generatedEvent.getInterfaceAddress());
         cb.isNull("ipaddr");
-        assertEquals(2, m_eventDao.countMatching(cb.toCriteria()));
+        assertEquals("failed, found: " + m_eventDao.findMatching(cb.toCriteria()), 2, m_eventDao.countMatching(cb.toCriteria()));
     }
 
     /**

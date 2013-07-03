@@ -4,20 +4,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.opennms.core.criteria.Alias;
 import org.opennms.core.criteria.Criteria.CriteriaVisitor;
 import org.opennms.core.criteria.Fetch;
 import org.opennms.core.criteria.Order;
 import org.opennms.core.criteria.restrictions.Restriction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BeanWrapperCriteriaVisitor implements CriteriaVisitor {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanWrapperCriteriaVisitor.class);
+    // private static final Logger LOG = LoggerFactory.getLogger(BeanWrapperCriteriaVisitor.class);
 
-    private Class<?> m_class;
     private List<Order> m_orders = new ArrayList<Order>();
     private List<Alias> m_aliases = new ArrayList<Alias>();
     private List<Fetch> m_fetches = new ArrayList<Fetch>();
@@ -25,7 +21,6 @@ public class BeanWrapperCriteriaVisitor implements CriteriaVisitor {
     private Integer m_limit = 0;
     private Integer m_offset = 0;
     private List<?> m_entities;
-    private Set<BeanWrapperFailure> m_failures = new LinkedHashSet<BeanWrapperFailure>();
     private List<?> m_matching;
 
     public BeanWrapperCriteriaVisitor(final List<?> obj) {
@@ -45,7 +40,6 @@ public class BeanWrapperCriteriaVisitor implements CriteriaVisitor {
                 matching.add(o);
             }
         }
-        m_class = clazz;
         m_matching = matching;
     }
 
@@ -82,7 +76,7 @@ public class BeanWrapperCriteriaVisitor implements CriteriaVisitor {
     @Override
     public void visitRestriction(final Restriction restriction) {
         final List<Object> matching = new ArrayList<Object>();
-        for (final Object entity : m_entities) {
+        for (final Object entity : m_matching) {
             final BeanWrapperRestrictionVisitor visitor = new BeanWrapperRestrictionVisitor(entity, m_aliases);
             restriction.visit(visitor);
             if (visitor.matches()) {
