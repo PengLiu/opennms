@@ -205,6 +205,7 @@ public class DatabasePopulator {
 
     private void doPopulateDatabase() {
         LOG.debug("==== DatabasePopulator Starting ====");
+
         final OnmsDistPoller distPoller = getDistPoller("localhost", "127.0.0.1");
         final NetworkBuilder builder = new NetworkBuilder(distPoller);
         
