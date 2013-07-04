@@ -32,10 +32,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,6 +91,7 @@ public class PollerFrontEndIntegrationTest implements InitializingBean, Temporar
         BeanUtils.assertAutowiring(this);
     }
 
+    /*
     @BeforeClass
     public static void setUpAnticipator() throws IOException {
         m_fileAnticipator = new FileAnticipator();
@@ -111,6 +108,7 @@ public class PollerFrontEndIntegrationTest implements InitializingBean, Temporar
 
         m_fileAnticipator.tearDown();
     }
+    */
 
     @BeforeTransaction
     public void setUp() throws Exception {
