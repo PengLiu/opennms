@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.opennms.core.criteria.CriteriaBuilder;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.api.SnmpInterfaceDao;
 import org.opennms.netmgt.model.OnmsCategory;
@@ -142,12 +143,24 @@ public class MockNodeDao extends AbstractMockDao<OnmsNode, Integer> implements N
 
     @Override
     public List<OnmsNode> findAllByVarCharAssetColumn(final String columnName, final String columnValue) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        final CriteriaBuilder builder = new CriteriaBuilder(OnmsNode.class);
+        builder.alias("assetRecord", "assets");
+        builder.eq("assets." + columnName, columnValue);
+        return findMatching(builder.toCriteria());
     }
 
     @Override
-    public List<OnmsNode> findAllByVarCharAssetColumnCategoryList(final String columnName, final String columnValue, Collection<OnmsCategory> categories) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+    public List<OnmsNode> findAllByVarCharAssetColumnCategoryList(final String columnName, final String columnValue, final Collection<OnmsCategory> categories) {
+        final List<OnmsNode> nodes = new ArrayList<OnmsNode>();
+        for (final OnmsNode node : findAllByVarCharAssetColumn(columnName, columnValue)) {
+            for (final OnmsCategory cat : categories) {
+                if (node.hasCategory(cat.getName())) {
+                    nodes.add(node);
+                    break;
+                }
+            }
+        }
+        return nodes;
     }
 
     @Override

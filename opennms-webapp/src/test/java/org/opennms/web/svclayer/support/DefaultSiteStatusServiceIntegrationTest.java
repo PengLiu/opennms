@@ -71,13 +71,12 @@ import org.springframework.transaction.annotation.Transactional;
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
         "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
         "classpath:/META-INF/opennms/applicationContext-mockEventd.xml",
-        //"classpath:/org/opennms/web/svclayer/applicationContext-svclayer.xml",
-        //"classpath:/META-INF/opennms/applicationContext-commonConfigs.xml",
-        //"classpath:/META-INF/opennms/applicationContext-databasePopulator.xml",
         "classpath:/META-INF/opennms/applicationContext-mock-usergroup.xml",
         "classpath:/mockForeignSourceContext.xml",
-        "classpath:/META-INF/opennms/applicationContext-reportingCore.xml",
-        "classpath:/META-INF/opennms/applicationContext-insertData-enabled.xml"
+        //"classpath:/META-INF/opennms/applicationContext-reportingCore.xml",
+        //"classpath:/org/opennms/web/svclayer/applicationContext-svclayer.xml",
+        "classpath:/META-INF/opennms/applicationContext-insertData-enabled.xml",
+        "classpath:/testSiteStatusServiceContext.xml"
 })
 @JUnitConfigurationEnvironment
 public class DefaultSiteStatusServiceIntegrationTest implements InitializingBean {
