@@ -45,6 +45,15 @@ public class BeanWrapperVisitorTest {
         public TestBean getSubBean() {
             return new TestBean();
         }
+        public CompareMe getEnumFirst() {
+            return CompareMe.FIRST;
+        }
+        public CompareMe getEnumSecond() {
+            return CompareMe.SECOND;
+        }
+        public CompareMe getEnumThird() {
+            return CompareMe.THIRD;
+        }
     }
 
     BeanWrapperCriteriaVisitor m_visitor = null;
@@ -234,6 +243,102 @@ public class BeanWrapperVisitorTest {
         final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(events);
         cb.toCriteria().visit(visitor);
         assertEquals(2, visitor.getMatches().size());
+    }
+
+    @Test
+    public void testEnumComparisonGt() {
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(m_testBean);
+        new CriteriaBuilder(TestBean.class).gt("enumFirst", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(0, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).gt("enumSecond", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+    }
+    
+    @Test
+    public void testEnumComparisonGe() {
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(m_testBean);
+        new CriteriaBuilder(TestBean.class).ge("enumFirst", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).ge("enumSecond", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+    }
+    
+    @Test
+    public void testEnumComparisonEq() {
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(m_testBean);
+        new CriteriaBuilder(TestBean.class).eq("enumFirst", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).eq("enumSecond", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(0, visitor.getMatches().size());
+    }
+    
+    @Test
+    public void testEnumComparisonNe() {
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(m_testBean);
+        new CriteriaBuilder(TestBean.class).ne("enumFirst", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(0, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).ne("enumSecond", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+    }
+    
+    @Test
+    public void testEnumComparisonLt() {
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(m_testBean);
+        new CriteriaBuilder(TestBean.class).lt("enumFirst", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(0, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).lt("enumSecond", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(0, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).lt("enumFirst", CompareMe.THIRD).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).lt("enumSecond", CompareMe.THIRD).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).lt("enumThird", CompareMe.THIRD).toCriteria().visit(visitor);
+        assertEquals(0, visitor.getMatches().size());
+    }
+    
+    @Test
+    public void testEnumComparisonLe() {
+        final BeanWrapperCriteriaVisitor visitor = new BeanWrapperCriteriaVisitor(m_testBean);
+        new CriteriaBuilder(TestBean.class).le("enumFirst", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).le("enumSecond", CompareMe.FIRST).toCriteria().visit(visitor);
+        assertEquals(0, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).le("enumFirst", CompareMe.THIRD).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).le("enumSecond", CompareMe.THIRD).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+
+        visitor.reset();
+        new CriteriaBuilder(TestBean.class).le("enumThird", CompareMe.THIRD).toCriteria().visit(visitor);
+        assertEquals(1, visitor.getMatches().size());
+    }
+    
+    private static enum CompareMe {
+        FIRST,
+        SECOND,
+        THIRD
     }
 
     private OnmsEvent createEvent(final int id, final String uei) {

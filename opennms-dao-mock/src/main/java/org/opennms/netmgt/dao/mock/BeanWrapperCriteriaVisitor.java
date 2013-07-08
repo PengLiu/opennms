@@ -1,6 +1,7 @@
 package org.opennms.netmgt.dao.mock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,6 +23,11 @@ public class BeanWrapperCriteriaVisitor implements CriteriaVisitor {
     private Integer m_offset = 0;
     private List<?> m_entities;
     private List<?> m_matching;
+
+    public BeanWrapperCriteriaVisitor(final Object... obj) {
+        m_entities = Arrays.asList(obj);
+        m_matching = Arrays.asList(obj);
+    }
 
     public BeanWrapperCriteriaVisitor(final List<?> obj) {
         m_entities = obj;
