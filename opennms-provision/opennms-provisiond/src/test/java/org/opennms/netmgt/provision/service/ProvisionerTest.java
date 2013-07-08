@@ -108,6 +108,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
@@ -170,7 +171,12 @@ public class ProvisionerTest implements InitializingBean, MockSnmpDataProviderAw
     private ProvisionService m_provisionService;
     
     @Autowired
-    private PausibleScheduledThreadPoolExecutor m_pausibleExecutor;
+    @Qualifier("scanExecutor")
+    private PausibleScheduledThreadPoolExecutor m_scanExecutor;
+
+    @Autowired
+    @Qualifier("scheduledExecutor")
+    private PausibleScheduledThreadPoolExecutor m_scheduledExecutor;
     
     @Autowired
     private ImportScheduler m_importSchedule;
@@ -244,8 +250,10 @@ public class ProvisionerTest implements InitializingBean, MockSnmpDataProviderAw
         m_foreignSourceRepository.flush();
 
         m_provisionService.setForeignSourceRepository(m_foreignSourceRepository);
-        
-        m_pausibleExecutor.pause();
+
+        // make sure node scan scheduler is running initially
+        m_scanExecutor.resume();
+        m_scheduledExecutor.pause();
     }
     
     @After
@@ -1191,34 +1199,35 @@ public class ProvisionerTest implements InitializingBean, MockSnmpDataProviderAw
     @Test(timeout=300000)
     public void testProvisionerNodeRescanSchedule() throws Exception {
         importFromResource("classpath:/tec_dump.xml.smalltest", true);
-        
+
+        m_scanExecutor.pause();
         List<NodeScanSchedule> schedulesForNode = m_provisionService.getScheduleForNodes();
-        
+
         assertEquals(10, schedulesForNode.size());
-        
-        //m_provisioner.scheduleRescanForExistingNodes();
-        
+        m_provisioner.scheduleRescanForExistingNodes();
         assertEquals(10, m_provisioner.getScheduleLength());
     }
     
     @Test(timeout=300000)
     public void testProvisionerUpdateScheduleAfterImport() throws Exception {
         importFromResource("classpath:/tec_dump.xml.smalltest", true);
-        
+        m_scanExecutor.pause();
+
         List<NodeScanSchedule> schedulesForNode = m_provisionService.getScheduleForNodes();
-        
         assertEquals(10, schedulesForNode.size());
-        
-        //m_provisioner.scheduleRescanForExistingNodes();
-        
+        m_provisioner.scheduleRescanForExistingNodes();
         assertEquals(10, m_provisioner.getScheduleLength());
-        
+
         //reimport with one missing node
+        m_scanExecutor.resume();
         importFromResource("classpath:/tec_dump.xml.smalltest.delete", true);
-        
-        //m_provisioner.scheduleRescanForExistingNodes();
+        m_scanExecutor.pause();
+
+        m_provisioner.scheduleRescanForExistingNodes();
         schedulesForNode = m_provisionService.getScheduleForNodes();
         
+        m_provisioner.scheduleRescanForExistingNodes();
+
         //check the schedule to make sure that it deletes the node
         assertEquals(schedulesForNode.size(), m_provisioner.getScheduleLength());
         assertEquals(getNodeDao().countAll(), m_provisioner.getScheduleLength());
