@@ -66,6 +66,7 @@ import org.opennms.netmgt.provision.persist.foreignsource.PluginConfig;
 import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -108,6 +109,7 @@ public class ProvisionerRescanTest implements InitializingBean {
     private ProvisionService m_provisionService;
 
     @Autowired
+    @Qualifier("scheduledExecutor")
     private PausibleScheduledThreadPoolExecutor m_pausibleExecutor;
 
     @Autowired
