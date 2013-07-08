@@ -105,11 +105,29 @@
     <bean id="outageDao" class="org.opennms.netmgt.dao.mock.MockOutageDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.OutageDao" ref="outageDao" />
 
+    <bean id="resourceDao" class="org.opennms.netmgt.dao.mock.MockResourceDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.ResourceDao" ref="resourceDao"/>
+    
+    <bean id="resourceReferenceDao" class="org.opennms.netmgt.dao.mock.MockResourceReferenceDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.ResourceReferenceDao" ref="resourceReferenceDao"/>
+    
+    <bean id="rrdDao" class="org.opennms.netmgt.dao.mock.MockRrdDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.RrdDao" ref="rrdDao"/>
+    
     <bean id="serviceTypeDao" class="org.opennms.netmgt.dao.mock.MockServiceTypeDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.ServiceTypeDao" ref="serviceTypeDao" />
 
     <bean id="snmpInterfaceDao" class="org.opennms.netmgt.dao.mock.MockSnmpInterfaceDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.SnmpInterfaceDao" ref="snmpInterfaceDao" />
+
+    <bean id="statsdConfigResourceLocation" class="java.lang.String">
+        <constructor-arg value="classpath:/statsd-configuration.xml" />
+    </bean>
+
+    <bean id="statsdConfigDao" class="org.opennms.netmgt.dao.castor.DefaultStatisticsDaemonConfigDao">
+        <property name="configResource" ref="statsdConfigResourceLocation" />
+        <property name="reloadCheckInterval" value="-1" />
+    </bean>
 
     <bean id="stpInterfaceDao" class="org.opennms.netmgt.dao.mock.MockStpInterfaceDao" />
     <onmsgi:service interface="org.opennms.netmgt.dao.api.StpInterfaceDao" ref="stpInterfaceDao" />
@@ -123,6 +141,9 @@
     <bean id="snmpPeerFactory" class="org.opennms.netmgt.config.SnmpPeerFactory" depends-on="init-snmpPeerFactory" factory-method="getInstance"/>
     <onmsgi:service interface="org.opennms.netmgt.config.SnmpAgentConfigFactory" ref="snmpPeerFactory"/>
 
+    <bean id="statisticsReportDao" class="org.opennms.netmgt.dao.mock.MockStatisticsReportDao" />
+    <onmsgi:service interface="org.opennms.netmgt.dao.api.StatisticsReportDao" ref="statisticsReportDao"/>
+    
     <bean id="surveillanceViewConfigResourceLocation" class="java.lang.String">
         <constructor-arg value="file:${opennms.home}/etc/surveillance-views.xml" />
     </bean>
