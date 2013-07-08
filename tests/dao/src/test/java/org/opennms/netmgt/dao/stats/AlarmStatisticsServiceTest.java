@@ -33,12 +33,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opennms.core.criteria.CriteriaBuilder;
 import org.opennms.core.criteria.Alias.JoinType;
+import org.opennms.core.criteria.CriteriaBuilder;
 import org.opennms.core.criteria.Fetch.FetchType;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
-import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.utils.BeanUtils;
 import org.opennms.netmgt.dao.DatabasePopulator;
 import org.opennms.netmgt.model.OnmsAlarm;
@@ -51,13 +50,12 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
-        "classpath:/META-INF/opennms/applicationContext-dao.xml",
+        "classpath:/META-INF/opennms/applicationContext-mockDao.xml",
         "classpath*:/META-INF/opennms/component-dao.xml",
-        "classpath:/META-INF/opennms/applicationContext-databasePopulator.xml",
-        "classpath:/META-INF/opennms/applicationContext-minimal-conf.xml"
+        "classpath:/META-INF/opennms/applicationContext-minimal-conf.xml",
+        "classpath:/applicationContext-alarmStatisticsServiceTest.xml"
 })
 @JUnitConfigurationEnvironment
-@JUnitTemporaryDatabase
 public class AlarmStatisticsServiceTest implements InitializingBean {
     @Autowired
     DatabasePopulator m_dbPopulator;
@@ -65,8 +63,6 @@ public class AlarmStatisticsServiceTest implements InitializingBean {
     @Autowired
     private AlarmStatisticsService m_statisticsService;
 
-    private static boolean m_initialized = false;
-    
     @Override
     public void afterPropertiesSet() throws Exception {
         BeanUtils.assertAutowiring(this);
@@ -75,8 +71,8 @@ public class AlarmStatisticsServiceTest implements InitializingBean {
     @Before
     public void setUp() {
         MockLogAppender.setupLogging();
-        if (!m_initialized) m_dbPopulator.populateDatabase();
-        m_initialized = true;
+        m_dbPopulator.resetDatabase();
+        m_dbPopulator.populateDatabase();
     }
     
     @Test
